@@ -1,5 +1,12 @@
 <?php
 // process.php: Handles image upload, overlays template, and adds customer name
+error_log("=== PROCESS.PHP START ===");
+
+// Load Composer autoloader and Pusher configuration
+require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/config.php';
+
+use Pusher\Pusher;
 
 // Set paths
 $templatePath = __DIR__ . '/template/template.png';
@@ -61,11 +68,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['image']) && isset($_
     
     // First add "with" in smaller text
     $withText = "with ";
-    $withFontSize = max(10, ($width / 32) * 0.8); // Increased "with" font size and decreased overall by 20%
+    $withFontSize = 48; // Fixed 48pt font size for "with" text
     
     // Then add customer name in larger text
     $customerText = strtoupper($customerName);
-    $nameFontSize = max(16, ($width / 18) * 0.8); // Larger font for customer name - decreased by 20% total
+    $nameFontSize = 72; // Fixed 72pt font size for customer name
     
     // Calculate total width to center both texts together
     $withBbox = imagettfbbox($withFontSize, 0, $fontPath, $withText);
@@ -95,6 +102,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['image']) && isset($_
     $outputFile = 'output_' . time() . '_' . rand(1000,9999) . '.png';
     $outputPath = $outputDir . $outputFile;
     imagepng($userImg, $outputPath);
+
+    // Send Pusher notification for real-time gallery update
+    error_log("=== PUSHER DEBUG START ===");
+    error_log("Starting Pusher notification for file: " . $outputFile);
+    
+    try {
+        error_log("Creating Pusher instance with official SDK");
+        
+        // Create Pusher instance using official SDK
+        $pusher = new Pusher(
+            $pusherConfig['key'],
+            $pusherConfig['secret'],
+            $pusherConfig['app_id'],
+            [
+                'cluster' => $pusherConfig['cluster'],
+                'useTLS' => $pusherConfig['use_tls']
+            ]
+        );
+        
+        error_log("Pusher instance created successfully");
+        
+        $imageData = [
+            'filename' => $outputFile,
+            'path' => 'output/' . $outputFile,
+            'customer_name' => $customerName,
+            'timestamp' => time(),
+            'formatted_date' => date('M j, Y g:i A')
+        ];
+        error_log("Image data prepared: " . json_encode($imageData));
+        
+        error_log("About to trigger Pusher event: " . $pusherEvent . " on channel: " . $pusherChannel);
+        
+        // Send the notification using official SDK
+        $result = $pusher->trigger($pusherChannel, $pusherEvent, $imageData);
+        
+        error_log("Pusher trigger response: " . json_encode($result));
+        
+        if ($result) {
+            error_log("✅ Pusher notification sent successfully for: " . $outputFile);
+        } else {
+            error_log("❌ Pusher notification failed for: " . $outputFile);
+        }
+        
+    } catch (Exception $e) {
+        error_log("🚨 Exception in Pusher notification: " . $e->getMessage());
+        error_log("Exception file: " . $e->getFile() . " line " . $e->getLine());
+        error_log("Stack trace: " . $e->getTraceAsString());
+    } catch (Error $e) {
+        error_log("🚨 Fatal error in Pusher notification: " . $e->getMessage());
+        error_log("Error file: " . $e->getFile() . " line " . $e->getLine());
+        error_log("Stack trace: " . $e->getTraceAsString());
+    }
+    error_log("=== PUSHER DEBUG END ===");
 
     imagedestroy($userImg);
     imagedestroy($templateImg);

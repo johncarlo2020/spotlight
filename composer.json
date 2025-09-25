@@ -1,0 +1,12 @@
+{
+    "name": "spotlight/image-processor",
+    "description": "Image processing application with real-time updates",
+    "require": {
+        "pusher/pusher-php-server": "^7.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Spotlight\\": "src/"
+        }
+    }
+}

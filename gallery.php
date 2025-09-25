@@ -1,5 +1,10 @@
 <?php
 // gallery.php: Display all processed images with pagination
+require_once 'pusher_helper.php';
+
+// Initialize Pusher helper for client configuration
+$pusherHelper = new PusherHelper();
+$pusherClientConfig = $pusherHelper->getClientConfig();
 
 // Get all images from output folder
 $outputDir = __DIR__ . '/output/';
@@ -513,6 +518,285 @@ function getCustomerNameFromFilename($filename) {
         </div>
     </div>
     
+    <!-- Pusher JavaScript Client -->
+    <?php if ($pusherClientConfig): ?>
+    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+    <script>
+        // Initialize Pusher client for real-time updates
+        const pusher = new Pusher('<?php echo $pusherClientConfig['key']; ?>', {
+            cluster: '<?php echo $pusherClientConfig['cluster']; ?>'
+        });
+
+        // Add connection state logging and toaster notifications
+        pusher.connection.bind('connected', function() {
+            console.log('✅ Gallery connected to Pusher successfully!');
+            console.log('Listening for updates on channel: <?php echo $pusherClientConfig['channel']; ?>');
+            createToaster('success', '🔗 Connected!', 'Real-time updates are now active', 3000);
+        });
+
+        pusher.connection.bind('disconnected', function() {
+            console.log('❌ Gallery disconnected from Pusher');
+            createToaster('warning', '⚠️ Disconnected', 'Real-time updates temporarily unavailable', 4000);
+        });
+
+        pusher.connection.bind('error', function(error) {
+            console.log('🚨 Pusher connection error:', error);
+            createToaster('error', '🚨 Connection Error', 'Unable to connect for real-time updates', 5000);
+        });
+
+        const channel = pusher.subscribe('<?php echo $pusherClientConfig['channel']; ?>');
+        
+        // Add subscription logging
+        channel.bind('pusher:subscription_succeeded', function() {
+            console.log('📡 Successfully subscribed to gallery updates channel');
+        });
+
+        channel.bind('pusher:subscription_error', function(error) {
+            console.log('❌ Failed to subscribe to channel:', error);
+        });
+        
+        channel.bind('<?php echo $pusherClientConfig['event']; ?>', function(data) {
+            console.log('🖼️ New image received:', data);
+            
+            // Add new image to gallery dynamically
+            addNewImageToGallery(data);
+            
+            // Show notification
+            showNewImageNotification(data.customer_name);
+        });
+
+        function addNewImageToGallery(imageData) {
+            const galleryGrid = document.querySelector('.gallery-grid');
+            if (!galleryGrid) return;
+
+            // Create new image card HTML
+            const newImageCard = document.createElement('div');
+            newImageCard.className = 'image-card';
+            newImageCard.style.animation = 'fadeInUp 0.5s ease-out';
+            
+            newImageCard.innerHTML = `
+                <div class="image-wrapper">
+                    <img src="${imageData.path}" alt="Spotlight Image" loading="lazy">
+                    <div class="image-overlay">
+                        <div class="image-info">
+                            <p>${imageData.formatted_date}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <a href="${imageData.path}" target="_blank" class="action-btn view-btn">View Full</a>
+                    <button onclick="printImage('${imageData.path}')" class="action-btn print-btn">Print</button>
+                    <button onclick="showQRModal('${imageData.filename}')" class="action-btn share-btn">Share</button>
+                </div>
+            `;
+
+            // Insert at the beginning of gallery
+            galleryGrid.insertBefore(newImageCard, galleryGrid.firstChild);
+            
+            // Remove last image if we're at the limit (9 images per page)
+            const imageCards = galleryGrid.querySelectorAll('.image-card');
+            if (imageCards.length > 9) {
+                imageCards[imageCards.length - 1].remove();
+            }
+        }
+
+        function showNewImageNotification(customerName) {
+            createToaster('success', '🖼️ New Image Added!', `New spotlight image created for ${customerName}`, 5000);
+        }
+
+        // Advanced Toaster System
+        function createToaster(type, title, message, duration = 4000) {
+            // Create toaster container if it doesn't exist
+            let toasterContainer = document.getElementById('toaster-container');
+            if (!toasterContainer) {
+                toasterContainer = document.createElement('div');
+                toasterContainer.id = 'toaster-container';
+                toasterContainer.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    z-index: 10000;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                `;
+                document.body.appendChild(toasterContainer);
+            }
+
+            // Create toaster element
+            const toaster = document.createElement('div');
+            toaster.className = `toaster toaster-${type}`;
+            
+            // Define colors based on type
+            const colors = {
+                success: { bg: '#28a745', border: '#1e7e34' },
+                info: { bg: '#17a2b8', border: '#117a8b' },
+                warning: { bg: '#ffc107', border: '#e0a800' },
+                error: { bg: '#dc3545', border: '#bd2130' }
+            };
+            
+            const color = colors[type] || colors.info;
+            
+            toaster.innerHTML = `
+                <div style="
+                    background: ${color.bg};
+                    color: white;
+                    padding: 16px 20px;
+                    border-radius: 8px;
+                    border-left: 4px solid ${color.border};
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.1);
+                    min-width: 300px;
+                    max-width: 400px;
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    animation: toasterSlideIn 0.4s ease-out;
+                    cursor: pointer;
+                    transition: transform 0.2s ease;
+                " onmouseover="this.style.transform='translateX(-5px)'" onmouseout="this.style.transform='translateX(0)'">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div style="flex: 1;">
+                            <div style="font-weight: bold; font-size: 14px; margin-bottom: 4px;">
+                                ${title}
+                            </div>
+                            <div style="font-size: 13px; opacity: 0.95; line-height: 1.4;">
+                                ${message}
+                            </div>
+                        </div>
+                        <div style="margin-left: 10px; cursor: pointer; font-size: 16px; opacity: 0.8; hover: opacity: 1;" onclick="this.parentElement.parentElement.parentElement.remove()">
+                            ×
+                        </div>
+                    </div>
+                    <div style="
+                        position: absolute;
+                        bottom: 0;
+                        left: 0;
+                        height: 3px;
+                        background: rgba(255,255,255,0.3);
+                        animation: toasterProgress ${duration}ms linear;
+                        border-radius: 0 0 4px 4px;
+                    "></div>
+                </div>
+            `;
+
+            // Add click to dismiss
+            toaster.onclick = function() {
+                this.style.animation = 'toasterSlideOut 0.3s ease-in forwards';
+                setTimeout(() => this.remove(), 300);
+            };
+
+            // Add to container
+            toasterContainer.appendChild(toaster);
+
+            // Auto remove after duration
+            setTimeout(() => {
+                if (toaster.parentNode) {
+                    toaster.style.animation = 'toasterSlideOut 0.3s ease-in forwards';
+                    setTimeout(() => {
+                        if (toaster.parentNode) {
+                            toaster.remove();
+                        }
+                    }, 300);
+                }
+            }, duration);
+
+            // Add sound effect (optional)
+            if (type === 'success') {
+                playNotificationSound();
+            }
+        }
+
+        // Optional notification sound
+        function playNotificationSound() {
+            try {
+                // Create a subtle notification beep using Web Audio API
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1);
+                
+                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.01);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.2);
+            } catch (e) {
+                // Ignore if Web Audio API is not supported
+            }
+        }
+
+        // Add CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            
+            @keyframes slideInRight {
+                from {
+                    opacity: 0;
+                    transform: translateX(300px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+            
+            @keyframes toasterSlideIn {
+                from {
+                    opacity: 0;
+                    transform: translateX(100%) scale(0.8);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0) scale(1);
+                }
+            }
+            
+            @keyframes toasterSlideOut {
+                from {
+                    opacity: 1;
+                    transform: translateX(0) scale(1);
+                }
+                to {
+                    opacity: 0;
+                    transform: translateX(100%) scale(0.8);
+                }
+            }
+            
+            @keyframes toasterProgress {
+                from {
+                    width: 100%;
+                }
+                to {
+                    width: 0%;
+                }
+            }
+            
+            .toaster:hover .toaster-progress {
+                animation-play-state: paused;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+    <?php else: ?>
+    <script>
+        console.log('Pusher not configured - real-time updates disabled');
+    </script>
+    <?php endif; ?>
+
     <script>
         function showQRModal(filename) {
             const modal = document.getElementById('qrModal');

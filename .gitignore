@@ -4,6 +4,10 @@ output/
 # Ignore sample folder
 sample/
 
+# Ignore Composer dependencies
+vendor/
+composer.lock
+
 # Ignore common temporary files
 *.tmp
 *.temp
