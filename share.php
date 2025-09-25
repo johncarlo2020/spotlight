@@ -50,13 +50,24 @@ $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' . urle
             text-align: center;
         }
         
+        .logo {
+            margin-bottom: 30px;
+        }
+        
+        .logo img {
+            max-width: 200px;
+            height: auto;
+            filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.3));
+        }
+        
         h2 {
-            color: #FFD700;
+            color: #fff;
             font-size: 2.2rem;
             margin-bottom: 10px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 2px;
+            display: none;
         }
         
         .customer-name {
@@ -102,8 +113,8 @@ $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' . urle
         }
         
         .copy-btn {
-            background: #FFD700;
-            color: #000;
+            background: #666;
+            color: #fff;
             padding: 12px 25px;
             border: none;
             border-radius: 8px;
@@ -116,9 +127,9 @@ $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' . urle
         }
         
         .copy-btn:hover {
-            background: #FFA500;
+            background: #888;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
         }
         
         .close-btn {
@@ -166,6 +177,9 @@ $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' . urle
 </head>
 <body>
     <div class="container">
+        <div class="logo">
+            <img src="logo.png" alt="Spotlight Logo">
+        </div>
         <h2>SHARE YOUR SPOTLIGHT</h2>
         
         <div class="customer-name">

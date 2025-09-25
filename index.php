@@ -24,19 +24,19 @@
             margin: 0 auto;
             padding: 40px;
             border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(255, 215, 0, 0.1);
+            box-shadow: 0 20px 40px rgba(255, 255, 255, 0.05);
             border: 1px solid #333;
         }
         
-        h2 {
-            color: #FFD700;
+        .logo {
             text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.3), 0 0 30px rgba(255, 215, 0, 0.1);
+            margin-bottom: 40px;
+        }
+        
+        .logo img {
+            max-width: 300px;
+            height: auto;
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.2));
         }
         
         .subtitle {
@@ -44,6 +44,11 @@
             color: #ccc;
             margin-bottom: 40px;
             font-size: 1.1rem;
+            display: none;
+        }
+        
+        h2 {
+            display: none;
         }
         
         form {
@@ -66,22 +71,22 @@
             width: 100%;
             padding: 15px;
             margin-bottom: 20px;
-            border: 2px solid #333;
+            border: 2px solid #444;
             border-radius: 8px;
             font-size: 16px;
             transition: all 0.3s ease;
-            background: #000;
+            background: #222;
             color: #fff;
         }
         
         input[type="text"]:focus, input[type="file"]:focus {
             outline: none;
-            border-color: #FFD700;
-            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
+            border-color: #666;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
         }
         
         input[type="submit"] {
-            background: #FFD700;
+            background: #fff;
             color: #000;
             padding: 15px 40px;
             border: none;
@@ -96,13 +101,13 @@
         }
         
         input[type="submit"]:hover {
-            background: #FFA500;
+            background: #ddd;
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.3);
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.2);
         }
         
         .print-btn {
-            background: #28a745;
+            background: #666666;
             color: white;
             padding: 12px 30px;
             border: none;
@@ -115,13 +120,13 @@
         }
         
         .print-btn:hover {
-            background: #218838;
+            background: #555;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+            box-shadow: 0 5px 15px rgba(102, 102, 102, 0.3);
         }
         
         .share-btn {
-            background: #007bff;
+            background: #888888;
             color: white;
             padding: 12px 30px;
             border: none;
@@ -134,9 +139,9 @@
         }
         
         .share-btn:hover {
-            background: #0056b3;
+            background: #777;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+            box-shadow: 0 5px 15px rgba(136, 136, 136, 0.3);
         }
         
         .result {
@@ -149,7 +154,7 @@
         }
         
         .result h3 {
-            color: #FFD700;
+            color: #fff;
             margin-bottom: 20px;
             font-size: 1.8rem;
             font-weight: 700;
@@ -160,7 +165,7 @@
             max-width: 100%;
             height: auto;
             border-radius: 10px;
-            box-shadow: 0 15px 35px rgba(255, 215, 0, 0.2);
+            box-shadow: 0 15px 35px rgba(255, 255, 255, 0.1);
             margin: 20px 0;
             transition: transform 0.3s ease;
         }
@@ -198,8 +203,16 @@
 </head>
 <body>
     <div class="container">
+        <div class="logo">
+            <img src="logo.png" alt="Spotlight Logo">
+        </div>
+        
         <h2>SPOTLIGHT GENERATOR</h2>
         <p class="subtitle">Create stunning spotlight images with custom overlays</p>
+        
+        <div style="text-align: center; margin-bottom: 30px;">
+            <a href="gallery.php" style="background: #666; color: #fff; padding: 10px 20px; border-radius: 25px; text-decoration: none; font-weight: 600; transition: all 0.3s ease;" onmouseover="this.style.background='#555'; this.style.color='#fff';" onmouseout="this.style.background='#666'; this.style.color='#fff';">📸 View Gallery</a>
+        </div>
     <?php
     $outputImg = isset($_GET['output']) ? $_GET['output'] : '';
     $customerName = isset($_GET['name']) ? htmlspecialchars($_GET['name']) : '';

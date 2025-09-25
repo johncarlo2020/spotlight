@@ -44,13 +44,24 @@ $imageUrl = $imagePath;
             text-align: center;
         }
         
+        .logo {
+            margin-bottom: 30px;
+        }
+        
+        .logo img {
+            max-width: 250px;
+            height: auto;
+            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.3));
+        }
+        
         h1 {
-            color: #FFD700;
+            color: #fff;
             font-size: 3rem;
             margin-bottom: 10px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 3px;
+            display: none;
         }
         
         .image-container {
@@ -112,8 +123,8 @@ $imageUrl = $imagePath;
         }
         
         .print-btn {
-            background: #FFD700;
-            color: #000;
+            background: #666;
+            color: #fff;
             padding: 15px 35px;
             border: none;
             border-radius: 8px;
@@ -126,9 +137,9 @@ $imageUrl = $imagePath;
         }
         
         .print-btn:hover {
-            background: #FFA500;
+            background: #888;
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.3);
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.1);
         }
         
         .footer {
@@ -170,6 +181,9 @@ $imageUrl = $imagePath;
 </head>
 <body>
     <div class="container">
+        <div class="logo">
+            <img src="logo.png" alt="Spotlight Logo">
+        </div>
         <h1>IN THE SPOTLIGHT</h1>
         
         <div class="customer-info">
