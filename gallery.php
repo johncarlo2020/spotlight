@@ -217,6 +217,16 @@ function getCustomerNameFromFilename($filename) {
             transform: translateY(-2px);
         }
         
+        .print-btn {
+            background: #666;
+            color: white;
+        }
+        
+        .print-btn:hover {
+            background: #555;
+            transform: translateY(-2px);
+        }
+        
         .pagination {
             display: flex;
             justify-content: center;
@@ -455,6 +465,7 @@ function getCustomerNameFromFilename($filename) {
                         </div>
                         <div class="card-actions">
                             <a href="<?php echo htmlspecialchars($image['path']); ?>" target="_blank" class="action-btn view-btn">View Full</a>
+                            <button onclick="printImage('<?php echo htmlspecialchars($image['path']); ?>')" class="action-btn print-btn">Print</button>
                             <button onclick="showQRModal('<?php echo htmlspecialchars($image['filename']); ?>')" class="action-btn share-btn">Share</button>
                         </div>
                     </div>
@@ -566,6 +577,52 @@ function getCustomerNameFromFilename($filename) {
                 window.location.href = '?page=<?php echo $currentPage + 1; ?>';
             }
         });
+        
+        function printImage(imagePath) {
+            // Create a new window for printing
+            const printWindow = window.open('', '_blank');
+            
+            // Write the HTML content for printing
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Print Image</title>
+                    <style>
+                        body {
+                            margin: 0;
+                            padding: 0;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            min-height: 100vh;
+                            background: white;
+                        }
+                        img {
+                            max-width: 100%;
+                            max-height: 100vh;
+                            object-fit: contain;
+                        }
+                        @media print {
+                            body {
+                                margin: 0;
+                            }
+                            img {
+                                max-width: 100%;
+                                height: auto;
+                                page-break-inside: avoid;
+                            }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <img src="${imagePath}" alt="Spotlight Image" onload="window.print(); window.close();">
+                </body>
+                </html>
+            `);
+            
+            printWindow.document.close();
+        }
     </script>
 </body>
 </html>
