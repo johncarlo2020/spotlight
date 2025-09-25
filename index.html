@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Image and Customer Name</title>
+</head>
+<body>
+    <h2>Upload Image and Customer Name</h2>
+    <?php
+    $outputImg = isset($_GET['output']) ? $_GET['output'] : '';
+    $customerName = isset($_GET['name']) ? htmlspecialchars($_GET['name']) : '';
+    ?>
+    <form action="process.php" method="post" enctype="multipart/form-data">
+        <label for="customer_name">Customer Name:</label>
+        <input type="text" id="customer_name" name="customer_name" required value="<?php echo $customerName; ?>"><br><br>
+        <label for="image">Select image to upload:</label>
+        <input type="file" name="image" id="image" accept="image/*" required><br><br>
+        <input type="submit" value="Upload and Process">
+    </form>
+    <?php if ($outputImg): ?>
+        <h3>Processed Image:</h3>
+        <img src="output/<?php echo htmlspecialchars($outputImg); ?>" alt="Processed Image" style="max-width:100%;height:auto;">
+    <?php endif; ?>
+</body>
+</html>

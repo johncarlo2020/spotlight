@@ -1,0 +1,24 @@
+# Ignore output folder where processed images are stored
+output/
+
+# Ignore sample folder
+sample/
+
+# Ignore common temporary files
+*.tmp
+*.temp
+*.log
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ignore backup files
+*.bak
+*~
