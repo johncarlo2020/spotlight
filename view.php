@@ -177,6 +177,10 @@ $imageUrl = $imagePath;
                 margin: 10px 0;
             }
         }
+
+        .d-none {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
@@ -186,7 +190,7 @@ $imageUrl = $imagePath;
         </div>
         <h1>IN THE SPOTLIGHT</h1>
         
-        <div class="customer-info">
+        <div class="customer-info d-none">
             <strong>Featuring: <?php echo htmlspecialchars($customerName); ?></strong>
         </div>
         
@@ -198,10 +202,10 @@ $imageUrl = $imagePath;
             <a href="<?php echo htmlspecialchars($imageUrl); ?>" download="spotlight_<?php echo htmlspecialchars($customerName); ?>.png" class="download-btn">
                 Download Image
             </a>
-            <button class="print-btn" onclick="printImage()">Print Image</button>
+            <button class="print-btn d-none" onclick="printImage()">Print Image</button>
         </div>
         
-        <div class="footer">
+        <div class="footer d-none">
             <p>This stunning spotlight image was created using our premium Spotlight Generator</p>
         </div>
     </div>

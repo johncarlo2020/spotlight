@@ -218,7 +218,7 @@
     $customerName = isset($_GET['name']) ? htmlspecialchars($_GET['name']) : '';
     ?>
         <form action="process.php" method="post" enctype="multipart/form-data">
-            <label for="customer_name">Customer Name:</label>
+            <label for="customer_name">Name:</label>
             <input type="text" id="customer_name" name="customer_name" required value="<?php echo $customerName; ?>">
             
             <label for="image">Select image to upload:</label>
