@@ -10,7 +10,7 @@ use Pusher\Pusher;
 
 // Set paths
 $templatePath = __DIR__ . '/template/template.png';
-$fontPath = __DIR__ . '/font/BodoniFLF.ttf';
+$fontPath = __DIR__ . '/font/Linotype - DidotLTPro-Headline.otf';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['image']) && isset($_POST['customer_name'])) {
     $customerName = $_POST['customer_name'];
@@ -65,14 +65,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['image']) && isset($_
     
     $textColor = imagecolorallocate($userImg, 255, 255, 255); // White text
     $shadowColor = imagecolorallocate($userImg, 0, 0, 0); // Black shadow
-    
-    // First add "with" in smaller text
-    $withText = "with ";
-    $withFontSize = 48; // Fixed 48pt font size for "with" text
-    
+
+    // First add "starring" in smaller text
+    $withText = "STARRING ";
+    $withFontSize = 30.72; // Fixed 48pt font size for "starring" text (reduced by 40%)
+
     // Then add customer name in larger text
     $customerText = strtoupper($customerName);
-    $nameFontSize = 72; // Fixed 72pt font size for customer name
+    $nameFontSize = 46.08; // Fixed 72pt font size for customer name (reduced by 40%)
     
     // Calculate total width to center both texts together
     $withBbox = imagettfbbox($withFontSize, 0, $fontPath, $withText);
@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['image']) && isset($_
     
     $totalWidth = $withWidth + $nameWidth;
     $startX = ($width - $totalWidth) / 2;
-    $textY = $height - ($height * 0.09) - 40; // Move down 3% more (from 12% to 9% from bottom)
+    $textY = $height - ($height * 0.08) - 40; // Position 7% from bottom
     
     // Add "with" text with shadow
     imagettftext($userImg, $withFontSize, 0, $startX + 2, $textY + 2, $shadowColor, $fontPath, $withText);
