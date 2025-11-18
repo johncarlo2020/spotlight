@@ -8,7 +8,6 @@ function addNewImageToGallery(imageData) {
     // Create new image card HTML
     const newImageCard = document.createElement('div');
     newImageCard.className = 'image-card';
-    newImageCard.style.animation = 'fadeInUp 0.5s ease-out';
     
     newImageCard.innerHTML = `
         <div class="image-wrapper">
@@ -21,18 +20,36 @@ function addNewImageToGallery(imageData) {
         </div>
         <div class="card-actions">
             <a href="${imageData.path}" target="_blank" class="action-btn view-btn">View Full</a>
-            <button onclick="printImage('${imageData.path}')" class="action-btn print-btn">Print</button>
-            <button onclick="showQRModal('${imageData.filename}')" class="action-btn share-btn">Share</button>
+            <button onclick="printImage('${imageData.path}')" class="action-btn print-btn"><i class="fas fa-print"></i> Print</button>
+            <button onclick="showQRModal('${imageData.filename}')" class="action-btn share-btn"><i class="fas fa-qrcode"></i> Share</button>
         </div>
     `;
 
+    // Set initial state for animation
+    newImageCard.style.opacity = '0';
+    newImageCard.style.transform = 'translateY(30px) scale(0.95)';
+    
     // Insert at the beginning of gallery
     galleryGrid.insertBefore(newImageCard, galleryGrid.firstChild);
+    
+    // Trigger animation after a brief delay
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            newImageCard.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+            newImageCard.style.opacity = '1';
+            newImageCard.style.transform = 'translateY(0) scale(1)';
+        });
+    });
     
     // Remove last image if we're at the limit (10 images per page)
     const imageCards = galleryGrid.querySelectorAll('.image-card');
     if (imageCards.length > 10) {
-        imageCards[imageCards.length - 1].remove();
+        const lastCard = imageCards[imageCards.length - 1];
+        // Fade out animation before removing
+        lastCard.style.transition = 'all 0.4s ease-out';
+        lastCard.style.opacity = '0';
+        lastCard.style.transform = 'scale(0.95)';
+        setTimeout(() => lastCard.remove(), 400);
     }
 }
 
