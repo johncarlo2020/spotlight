@@ -7,6 +7,10 @@ function showQRModal(filename) {
     const qrContainer = document.getElementById('qrCodeContainer');
     const shareUrl = document.getElementById('shareUrl');
     
+    // Show loading state
+    qrContainer.classList.add('loading');
+    qrContainer.innerHTML = '';
+    
     // Create the shareable URL
     const baseUrl = window.location.origin + window.location.pathname.replace('gallery.php', '');
     const fullShareUrl = baseUrl + 'view.php?img=' + encodeURIComponent(filename) + '&name=Spotlight';
@@ -14,9 +18,21 @@ function showQRModal(filename) {
     // Generate QR code URL
     const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=' + encodeURIComponent(fullShareUrl);
     
-    // Update modal content
-    qrContainer.innerHTML = '<img src="' + qrUrl + '" alt="QR Code" style="border-radius: 8px;">';
-    shareUrl.value = fullShareUrl;
+    // Create image element with loading handler
+    const qrImg = new Image();
+    qrImg.onload = function() {
+        qrContainer.classList.remove('loading');
+        qrContainer.innerHTML = '';
+        qrImg.alt = 'QR Code';
+        qrContainer.appendChild(qrImg);
+    };
+    qrImg.onerror = function() {
+        qrContainer.classList.remove('loading');
+        qrContainer.innerHTML = '<p style="color: #dc3545; padding: 20px;">Failed to load QR code</p>';
+    };
+    qrImg.src = qrUrl;
+    
+    shareUrl.textContent = fullShareUrl;
     
     // Show modal
     modal.style.display = 'block';
@@ -28,20 +44,44 @@ function closeQRModal() {
 
 function copyShareUrl() {
     const shareUrl = document.getElementById('shareUrl');
-    shareUrl.select();
-    shareUrl.setSelectionRange(0, 99999); // For mobile devices
+    const urlText = shareUrl.textContent;
     
-    try {
-        document.execCommand('copy');
-        alert('Link copied to clipboard!');
-    } catch (err) {
-        // Fallback for modern browsers
-        navigator.clipboard.writeText(shareUrl.value).then(function() {
-            alert('Link copied to clipboard!');
-        }).catch(function() {
+    // Use modern clipboard API
+    navigator.clipboard.writeText(urlText).then(function() {
+        // Create a temporary success message
+        const originalText = shareUrl.textContent;
+        shareUrl.textContent = '✓ Copied to clipboard!';
+        shareUrl.style.color = '#28a745';
+        
+        setTimeout(() => {
+            shareUrl.textContent = originalText;
+            shareUrl.style.color = '';
+        }, 2000);
+    }).catch(function() {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = urlText;
+        textArea.style.position = 'fixed';
+        textArea.style.opacity = '0';
+        document.body.appendChild(textArea);
+        textArea.select();
+        
+        try {
+            document.execCommand('copy');
+            const originalText = shareUrl.textContent;
+            shareUrl.textContent = '✓ Copied to clipboard!';
+            shareUrl.style.color = '#28a745';
+            
+            setTimeout(() => {
+                shareUrl.textContent = originalText;
+                shareUrl.style.color = '';
+            }, 2000);
+        } catch (err) {
             alert('Failed to copy link. Please copy manually.');
-        });
-    }
+        }
+        
+        document.body.removeChild(textArea);
+    });
 }
 
 // Close modal when clicking outside of it

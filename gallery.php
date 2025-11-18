@@ -187,11 +187,11 @@ function getCustomerNameFromFilename($filename) {
         <div class="modal-content">
             <span class="close-modal" onclick="closeQRModal()">&times;</span>
             <h3>Share Your Spotlight</h3>
-            <div class="modal-qr" id="qrCodeContainer">
+            <div class="modal-qr loading" id="qrCodeContainer">
                 <!-- QR code will be loaded here -->
             </div>
-            <div class="modal-url">
-                <input type="text" id="shareUrl" readonly>
+            <div class="modal-url" id="shareUrl">
+                <!-- URL will be displayed here -->
             </div>
             <button class="copy-btn" onclick="copyShareUrl()">Copy Link</button>
         </div>
