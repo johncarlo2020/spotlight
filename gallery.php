@@ -55,10 +55,10 @@ function getCustomerNameFromFilename($filename) {
     <link rel="stylesheet" href="css/gallery.css">
 </head>
 <body>
-    <a href="index.php" class="back-btn">← Back to Generator</a>
+    <a href="index.php" class="back-btn" data-animate="fade-in-left">← Back to Generator</a>
     
     <div class="container">
-        <div class="header">
+        <div class="header" data-animate="fade-in-down">
             <div class="logo">
                 <img src="logo.png" alt="Spotlight Logo">
             </div>
@@ -70,12 +70,12 @@ function getCustomerNameFromFilename($filename) {
         </div>
         
         <?php if (empty($currentImages)): ?>
-            <div class="empty-state">
+            <div class="empty-state" data-animate="fade-in-up" data-delay="200">
                 <h2>No Images Yet</h2>
                 <p>Create your first spotlight image to see it here!</p>
             </div>
         <?php else: ?>
-            <div class="gallery-grid">
+            <div class="gallery-grid" data-animate="fade-in-up" data-delay="300">
                 <?php foreach ($currentImages as $index => $image): ?>
                     <div class="image-card">
                         <div class="image-wrapper">
@@ -204,5 +204,6 @@ function getCustomerNameFromFilename($filename) {
     <?php endif; ?>
 
     <script src="js/gallery-pusher.js"></script>
+    <script src="js/animations.js"></script>
     <script src="js/gallery.js"></script>
 </body>

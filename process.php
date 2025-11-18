@@ -10,7 +10,7 @@ use Pusher\Pusher;
 
 // Set paths
 $templatePath = __DIR__ . '/template/template.png';
-$fontPath = __DIR__ . '/font/Montserrat-SemiBold.ttf';
+$fontPath = __DIR__ . '/font/Montserrat-Regular.ttf';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['image']) && isset($_POST['customer_name'])) {
     $customerName = $_POST['customer_name'];
@@ -96,11 +96,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['image']) && isset($_
     }
     
     $textColor = imagecolorallocate($userImg, 255, 255, 255); // White text
-    $shadowColor = imagecolorallocate($userImg, 0, 0, 0); // Black shadow
 
     // Add customer name (centered)
     $customerText = strtoupper($customerName);
-    $nameFontSize = 46.08; // Fixed 72pt font size for customer name (reduced by 40%)
+    $nameFontSize = 36; // Reduced font size with Regular weight
     
     // Calculate width to center the name
     $nameBbox = imagettfbbox($nameFontSize, 0, $fontPath, $customerText);
@@ -109,8 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['image']) && isset($_
     $startX = ($width - $nameWidth) / 2;
     $textY = $height - ($height * 0.08) - 40; // Position 8% from bottom
     
-    // Add customer name text with shadow
-    imagettftext($userImg, $nameFontSize, 0, $startX + 2, $textY + 2, $shadowColor, $fontPath, $customerText);
+    // Add customer name text (no shadow)
     imagettftext($userImg, $nameFontSize, 0, $startX, $textY, $textColor, $fontPath, $customerText);
 
     // Save final image to output folder

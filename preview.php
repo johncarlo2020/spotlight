@@ -118,6 +118,45 @@ if (!$outputImg || !file_exists('output/' . $outputImg)) {
             z-index: 200;
         }
         
+        /* Animation fixes for preview page */
+        .controls-bottom[data-animate] {
+            opacity: 0;
+        }
+        
+        .controls-bottom.animate-slide-in-up {
+            animation: slideInUpCentered 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        
+        @keyframes slideInUpCentered {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+        
+        .image-container[data-animate] {
+            opacity: 0;
+        }
+        
+        .image-container.animate-fade-in-scale {
+            animation: fadeInScale 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
         .control-panel {
             background: rgba(26, 26, 46, 0.95);
             backdrop-filter: blur(20px);
@@ -218,11 +257,11 @@ if (!$outputImg || !file_exists('output/' . $outputImg)) {
         </div>
     </div> -->
     
-    <div class="image-container">
+    <div class="image-container" data-animate="fade-in-scale" data-delay="100">
         <img src="output/<?php echo htmlspecialchars($outputImg); ?>" alt="Processed Image" id="previewImage">
     </div>
     
-    <div class="controls-bottom">
+    <div class="controls-bottom" data-animate="slide-in-up" data-delay="400">
         <div class="control-panel">
             <button class="action-btn btn-download" onclick="downloadImage()">
                 <i class="fas fa-download"></i> Download
@@ -236,6 +275,7 @@ if (!$outputImg || !file_exists('output/' . $outputImg)) {
         </div>
     </div>
     
+    <script src="js/animations.js"></script>
     <script>
         const filename = '<?php echo htmlspecialchars($outputImg); ?>';
         const customerName = '<?php echo htmlspecialchars($customerName); ?>';

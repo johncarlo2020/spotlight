@@ -17,14 +17,14 @@
     </style>
 </head>
 <body>
-      <div class="logo">
+      <div class="logo" data-animate="fade-in-down">
             <img src="logo.png" alt="Spotlight Logo">
         </div>
         
-        <div class="text-center mb-30">
+        <div class="text-center mb-30" data-animate="fade-in-up" data-delay="200">
             <a href="gallery.php" class="gallery-link"><i class="fas fa-images"></i> View Gallery</a>
         </div>
-        <form id="uploadForm" class="container form-container">
+        <form id="uploadForm" class="container form-container" data-animate="fade-in-up" data-delay="400">
             <label for="customer_name">Name:</label>
             <input type="text" id="customer_name" name="customer_name" required>
             
@@ -35,6 +35,7 @@
         </form>
 
     
+    <script src="js/animations.js"></script>
     <script src="js/index.js"></script>
 </body>
 </html>

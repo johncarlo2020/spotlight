@@ -28,23 +28,23 @@ $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' . urle
     <link rel="stylesheet" href="css/share.css">
 </head>
 <body>
-    <div class="container">
+    <div class="container" data-animate="fade-in-scale">
         <div class="logo">
             <img src="logo.png" alt="Spotlight Logo">
         </div>
         <h2>SHARE YOUR SPOTLIGHT</h2>
         
-        <div class="customer-name">
+        <div class="customer-name" data-animate="fade-in-up" data-delay="200">
             <strong>Featuring: <?php echo htmlspecialchars($customerName); ?></strong>
         </div>
         
-        <div class="qr-code">
+        <div class="qr-code" data-animate="fade-in-scale" data-delay="300">
             <img src="<?php echo $qrUrl; ?>" alt="QR Code" />
         </div>
         
-        <p class="instructions">Scan the QR code above or copy the link below to share your spotlight image:</p>
+        <p class="instructions" data-animate="fade-in-up" data-delay="400">Scan the QR code above or copy the link below to share your spotlight image:</p>
         
-        <div class="share-url">
+        <div class="share-url" data-animate="fade-in-up" data-delay="500">
             <input type="text" id="shareUrl" value="<?php echo htmlspecialchars($shareUrl); ?>" readonly>
         </div>
         
@@ -56,6 +56,7 @@ $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' . urle
         </button>
     </div>
     
+    <script src="js/animations.js"></script>
     <script src="js/share.js"></script>
 </body>
 </html>

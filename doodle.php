@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="css/doodle.css">
 </head>
 <body>
-    <div class="header">
+    <div class="header" data-animate="fade-in-down">
         <!-- <div class="logo">
             <img src="logo.png" alt="Spotlight Logo">
         </div> -->
@@ -18,11 +18,11 @@
         <p class="subtitle">Draw on your image - Pick a color and start doodling!</p>
     </div>
     
-    <div class="canvas-container">
+    <div class="canvas-container" data-animate="fade-in-scale" data-delay="200">
         <div id="pixiCanvas"></div>
     </div>
     
-    <div class="controls-left">
+    <div class="controls-left" data-animate="slide-in-up" data-delay="400">
         <div class="control-panel">
             <div class="color-palette">
                 <div class="color-btn active" style="background: #ffffff;" onclick="setColor('#ffffff', event)" title="White"></div>
@@ -46,8 +46,13 @@
     
     <div id="loadingOverlay">
         <div class="loading-content">
-            <div class="spinner"></div>
-            <h2 style="color: #fff;">Processing your image...</h2>
+            <div class="loading-logo">
+                <img src="logo.png" alt="Spotlight">
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            <p class="loading-text">Creating your spotlight moment...</p>
         </div>
     </div>
     
@@ -63,6 +68,7 @@
         </div>
     </div>
     
+    <script src="js/animations.js"></script>
     <script src="js/doodle.js"></script>
 </body>
 </html>
