@@ -51,6 +51,7 @@ function getCustomerNameFromFilename($filename) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spotlight Gallery</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/gallery.css">
 </head>
 <body>
@@ -87,8 +88,12 @@ function getCustomerNameFromFilename($filename) {
                         </div>
                         <div class="card-actions">
                             <a href="<?php echo htmlspecialchars($image['path']); ?>" target="_blank" class="action-btn view-btn">View Full</a>
-                            <button onclick="printImage('<?php echo htmlspecialchars($image['path']); ?>')" class="action-btn print-btn">Print</button>
-                            <button onclick="showQRModal('<?php echo htmlspecialchars($image['filename']); ?>')" class="action-btn share-btn">Share</button>
+                            <button onclick="printImage('<?php echo htmlspecialchars($image['path']); ?>')" class="action-btn print-btn">
+                                <i class="fas fa-print"></i> Print
+                            </button>
+                            <button onclick="showQRModal('<?php echo htmlspecialchars($image['filename']); ?>')" class="action-btn share-btn">
+                                <i class="fas fa-qrcode"></i> Share
+                            </button>
                         </div>
                     </div>
                 <?php endforeach; ?>

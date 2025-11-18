@@ -3,8 +3,9 @@
    ============================================ */
 
 body {
-    background: #000000;
+    background: linear-gradient(135deg, #1a0a0e 0%, #2e1619 100%);
     padding: 20px;
+    min-height: 100vh;
 }
 
 .header {
@@ -43,10 +44,10 @@ body {
 
 .stats {
     display: inline-block;
-    background: #1a1a1a;
+    background: rgba(235, 51, 73, 0.1);
     padding: 10px 20px;
     border-radius: 20px;
-    border: 1px solid #333;
+    border: 1px solid rgba(235, 51, 73, 0.3);
     color: #fff;
     font-weight: 600;
 }
@@ -59,18 +60,18 @@ body {
 }
 
 .image-card {
-    background: #1a1a1a;
+    background: linear-gradient(135deg, #2e1619 0%, #1a0a0e 100%);
     border-radius: 15px;
     overflow: hidden;
-    border: 1px solid #333;
+    border: 1px solid rgba(235, 51, 73, 0.2);
     transition: all 0.3s ease;
     cursor: pointer;
 }
 
 .image-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(255, 255, 255, 0.1);
-    border-color: #666;
+    box-shadow: 0 20px 40px rgba(235, 51, 73, 0.3);
+    border-color: rgba(235, 51, 73, 0.5);
 }
 
 .image-wrapper {
@@ -120,7 +121,7 @@ body {
 
 .card-actions {
     padding: 15px;
-    background: #111;
+    background: rgba(26, 10, 14, 0.8);
     display: flex;
     gap: 10px;
     justify-content: center;
@@ -182,9 +183,10 @@ body {
 }
 
 .back-btn:hover {
-    background: #666;
+    background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
     color: #fff;
     transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(235, 51, 73, 0.4);
 }
 
 .empty-state {
@@ -217,15 +219,16 @@ body {
 }
 
 .modal-content {
-    background: #111111;
+    background: linear-gradient(135deg, #2e1619 0%, #1a0a0e 100%);
     margin: 5% auto;
     padding: 30px;
     border-radius: 15px;
     width: 90%;
     max-width: 500px;
     text-align: center;
-    border: 1px solid #333;
+    border: 1px solid rgba(235, 51, 73, 0.3);
     position: relative;
+    box-shadow: 0 20px 60px rgba(235, 51, 73, 0.2);
 }
 
 .close-modal {
@@ -253,17 +256,17 @@ body {
 .modal-qr {
     margin: 20px 0;
     padding: 20px;
-    background: #1a1a1a;
+    background: rgba(235, 51, 73, 0.05);
     border-radius: 10px;
-    border: 1px solid #333;
+    border: 1px solid rgba(235, 51, 73, 0.2);
 }
 
 .modal-url {
-    background: #1a1a1a;
+    background: rgba(235, 51, 73, 0.1);
     padding: 15px;
     border-radius: 8px;
     margin: 20px 0;
-    border: 2px solid #333;
+    border: 2px solid rgba(235, 51, 73, 0.3);
     word-break: break-all;
 }
 

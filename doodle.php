@@ -4,15 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Doodle on Your Image - Spotlight</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/8.13.2/pixi.min.js" integrity="sha512-rOMqai9NIPaFWpmvHUjdOa2dSuaaYo6i7E19jS1ZW9rjnrl4qAOOtsOeTk0QgIflFCe2ZYi/7or3CRF6VfBk9g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/doodle.css">
 </head>
 <body>
     <div class="header">
-        <div class="logo">
+        <!-- <div class="logo">
             <img src="logo.png" alt="Spotlight Logo">
-        </div>
+        </div> -->
         <h1>Draw & Customize</h1>
         <p class="subtitle">Draw on your image - Pick a color and start doodling!</p>
     </div>
@@ -30,8 +31,12 @@
                 <div class="color-btn" style="background: #0000ff;" onclick="setColor('#0000ff', event)" title="Blue"></div>
             </div>
             <div class="button-group">
-                <button class="action-btn btn-clear" onclick="clearCanvas()">Clear</button>
-                <button class="action-btn btn-process" onclick="processImage()">Save</button>
+                <button class="action-btn btn-clear" onclick="clearCanvas()">
+                    <i class="fas fa-eraser"></i> Clear
+                </button>
+                <button class="action-btn btn-process" onclick="processImage()">
+                    <i class="fas fa-check-circle"></i> Save
+                </button>
             </div>
         </div>
     </div>

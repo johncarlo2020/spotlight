@@ -14,7 +14,22 @@ if (!$outputImg || !file_exists('output/' . $outputImg)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Preview - Spotlight</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        @font-face {
+            font-family: 'Montserrat';
+            src: url('font/Montserrat-Regular.ttf') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'Montserrat';
+            src: url('font/Montserrat-SemiBold.ttf') format('truetype');
+            font-weight: 600;
+            font-style: normal;
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -22,8 +37,8 @@ if (!$outputImg || !file_exists('output/' . $outputImg)) {
         }
         
         body {
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            font-family: 'Montserrat', 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a0a0e 0%, #2e1619 100%);
             height: 100vh;
             overflow: hidden;
             color: #ffffff;
@@ -37,8 +52,8 @@ if (!$outputImg || !file_exists('output/' . $outputImg)) {
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 20%, rgba(252, 163, 17, 0.1) 0%, transparent 50%);
+            background: radial-gradient(circle at 20% 80%, rgba(235, 51, 73, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(244, 92, 67, 0.1) 0%, transparent 50%);
             pointer-events: none;
             z-index: 0;
         }
@@ -98,7 +113,7 @@ if (!$outputImg || !file_exists('output/' . $outputImg)) {
         .controls-bottom {
             position: fixed;
             left: 50%;
-            bottom: 74px;
+            bottom: 50px;
             transform: translateX(-50%);
             z-index: 200;
         }
@@ -107,30 +122,35 @@ if (!$outputImg || !file_exists('output/' . $outputImg)) {
             background: rgba(26, 26, 46, 0.95);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border-radius: 50px;
-            padding: 10px 20px;
+            border-radius: 40px;
+            padding: 8px 16px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4),
                         0 0 0 1px rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
         
         .action-btn {
             background: rgba(255, 255, 255, 0.1);
             border: none;
-            border-radius: 30px;
-            padding: 16px 36px;
+            border-radius: 25px;
+            padding: 12px 24px;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            gap: 8px;
+            font-size: 14px;
             font-weight: 600;
             color: #fff;
             white-space: nowrap;
             text-decoration: none;
+        }
+        
+        .action-btn i {
+            font-size: 16px;
         }
         
         .action-btn:hover {
@@ -138,27 +158,28 @@ if (!$outputImg || !file_exists('output/' . $outputImg)) {
         }
         
         .btn-download {
-            background: linear-gradient(135deg, rgba(17, 153, 142, 0.9) 0%, rgba(56, 239, 125, 0.9) 100%);
+            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
         }
         
         .btn-download:hover {
-            background: linear-gradient(135deg, rgba(17, 153, 142, 1) 0%, rgba(56, 239, 125, 1) 100%);
+            background: linear-gradient(135deg, #f5576c 0%, #ff6b6b 100%);
         }
         
         .btn-share {
-            background: linear-gradient(135deg, rgba(79, 172, 254, 0.9) 0%, rgba(0, 242, 254, 0.9) 100%);
+            background: linear-gradient(135deg, rgba(235, 51, 73, 0.7) 0%, rgba(244, 92, 67, 0.7) 100%);
         }
         
         .btn-share:hover {
-            background: linear-gradient(135deg, rgba(79, 172, 254, 1) 0%, rgba(0, 242, 254, 1) 100%);
+            background: linear-gradient(135deg, rgba(235, 51, 73, 0.9) 0%, rgba(244, 92, 67, 0.9) 100%);
         }
         
         .btn-create {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .btn-create:hover {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 1) 0%, rgba(118, 75, 162, 1) 100%);
+            background: rgba(255, 255, 255, 0.15);
         }
         
         @media (max-width: 768px) {
@@ -179,23 +200,23 @@ if (!$outputImg || !file_exists('output/' . $outputImg)) {
             }
             
             .control-panel {
-                padding: 6px 12px;
+                padding: 6px 10px;
                 gap: 6px;
             }
             
             .action-btn {
-                padding: 6px 14px;
+                padding: 10px 18px;
                 font-size: 12px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="header">
+    <!-- <div class="header">
         <div class="logo">
             <img src="logo.png" alt="Spotlight Logo">
         </div>
-    </div>
+    </div> -->
     
     <div class="image-container">
         <img src="output/<?php echo htmlspecialchars($outputImg); ?>" alt="Processed Image" id="previewImage">
@@ -203,9 +224,15 @@ if (!$outputImg || !file_exists('output/' . $outputImg)) {
     
     <div class="controls-bottom">
         <div class="control-panel">
-            <button class="action-btn btn-download" onclick="downloadImage()">Download</button>
-            <button class="action-btn btn-share" onclick="shareImage()">Share</button>
-            <a href="index.php" class="action-btn btn-create">Create New</a>
+            <button class="action-btn btn-download" onclick="downloadImage()">
+                <i class="fas fa-download"></i> Download
+            </button>
+            <button class="action-btn btn-share" onclick="shareImage()">
+                <i class="fas fa-share-alt"></i> Share
+            </button>
+            <a href="index.php" class="action-btn btn-create">
+                <i class="fas fa-plus-circle"></i> Create New
+            </a>
         </div>
     </div>
     

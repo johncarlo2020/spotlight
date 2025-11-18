@@ -83,7 +83,7 @@ h1 {
 .controls-left {
     position: fixed;
     left: 50%;
-    bottom: 74px;
+    bottom: 37px;
     transform: translateX(-50%);
     z-index: 200;
 }
@@ -144,6 +144,14 @@ h1 {
     gap: 8px;
     padding-left: 15px;
     border-left: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.button-group .action-btn {
+    gap: 6px;
+}
+
+.button-group .action-btn i {
+    font-size: 14px;
 }
 
 .action-btn.btn-clear {

@@ -24,6 +24,7 @@ $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' . urle
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Share Image - QR Code</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/share.css">
 </head>
 <body>
@@ -47,8 +48,12 @@ $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' . urle
             <input type="text" id="shareUrl" value="<?php echo htmlspecialchars($shareUrl); ?>" readonly>
         </div>
         
-        <button class="copy-btn" onclick="copyToClipboard()">Copy Link</button>
-        <button class="close-btn" onclick="window.close()">Close</button>
+        <button class="copy-btn" onclick="copyToClipboard()">
+            <i class="fas fa-copy"></i> Copy Link
+        </button>
+        <button class="close-btn" onclick="window.close()">
+            <i class="fas fa-times"></i> Close
+        </button>
     </div>
     
     <script src="js/share.js"></script>

@@ -4,34 +4,36 @@
     <meta charset="UTF-8">
     <title>Upload Image and Customer Name</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
             display: flex;
             align-items: center;
+            flex-direction: column;
             justify-content: center;
+            align-items: space-around;
+            height: 100svh;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">
+      <div class="logo">
             <img src="logo.png" alt="Spotlight Logo">
         </div>
         
         <div class="text-center mb-30">
-            <a href="gallery.php" class="gallery-link">📸 View Gallery</a>
+            <a href="gallery.php" class="gallery-link"><i class="fas fa-images"></i> View Gallery</a>
         </div>
-        
-        <form id="uploadForm">
+        <form id="uploadForm" class="container form-container">
             <label for="customer_name">Name:</label>
             <input type="text" id="customer_name" name="customer_name" required>
             
             <label for="image">Select image to upload:</label>
             <input type="file" name="image" id="image" accept="image/*" required>
             
-            <input type="button" id="continueBtn" value="Upload and Continue" onclick="goToDoodle()">
+            <button type="button" id="continueBtn" onclick="goToDoodle()"><i class="fas fa-upload"></i> Upload and Continue</button>
         </form>
-    </div>
+
     
     <script src="js/index.js"></script>
 </body>

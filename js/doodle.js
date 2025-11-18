@@ -18,18 +18,53 @@ async function initPixi(imageData) {
     originalImageData = imageData; // Store original for reset
     const canvasContainer = document.getElementById('pixiCanvas');
     
+    // Template dimensions (2:3 aspect ratio)
+    const TARGET_WIDTH = 1200;
+    const TARGET_HEIGHT = 1800;
+    const TARGET_RATIO = TARGET_WIDTH / TARGET_HEIGHT;
+    
     // Create image element
     const img = new Image();
     img.onload = async () => {
-        // Use the actual image dimensions without any scaling
-        const width = img.width;
-        const height = img.height;
+        const uploadedWidth = img.width;
+        const uploadedHeight = img.height;
+        const uploadedRatio = uploadedWidth / uploadedHeight;
         
-        // Create Pixi app using v8 API
+        // Calculate dimensions to match template aspect ratio
+        let width, height, cropX, cropY, resizeWidth, resizeHeight;
+        
+        if (uploadedRatio > TARGET_RATIO) {
+            // Image is wider, fit to height and crop width
+            resizeHeight = TARGET_HEIGHT;
+            resizeWidth = Math.round(uploadedWidth * (TARGET_HEIGHT / uploadedHeight));
+            cropX = Math.round((resizeWidth - TARGET_WIDTH) / 2);
+            cropY = 0;
+        } else {
+            // Image is taller, fit to width and crop height
+            resizeWidth = TARGET_WIDTH;
+            resizeHeight = Math.round(uploadedHeight * (TARGET_WIDTH / uploadedWidth));
+            cropX = 0;
+            cropY = Math.round((resizeHeight - TARGET_HEIGHT) / 2);
+        }
+        
+        // Create temporary canvas for resizing and cropping
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = TARGET_WIDTH;
+        tempCanvas.height = TARGET_HEIGHT;
+        const tempCtx = tempCanvas.getContext('2d');
+        
+        // Draw resized and cropped image
+        tempCtx.drawImage(
+            img,
+            0, 0, uploadedWidth, uploadedHeight,
+            -cropX, -cropY, resizeWidth, resizeHeight
+        );
+        
+        // Create Pixi app using v8 API with template dimensions
         app = new PIXI.Application();
         await app.init({
-            width: width,
-            height: height,
+            width: TARGET_WIDTH,
+            height: TARGET_HEIGHT,
             backgroundColor: 0x1a1a1a,
             antialias: true
         });
@@ -37,11 +72,11 @@ async function initPixi(imageData) {
         canvasContainer.innerHTML = '';
         canvasContainer.appendChild(app.canvas);
         
-        // Create base sprite from uploaded image
-        baseTexture = PIXI.Texture.from(img);
+        // Create base sprite from processed image
+        baseTexture = PIXI.Texture.from(tempCanvas);
         baseSprite = new PIXI.Sprite(baseTexture);
-        baseSprite.width = width;
-        baseSprite.height = height;
+        baseSprite.width = TARGET_WIDTH;
+        baseSprite.height = TARGET_HEIGHT;
         app.stage.addChild(baseSprite);
         
         // Create drawing container
