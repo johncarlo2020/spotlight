@@ -288,7 +288,7 @@ if (!$outputImg || !file_exists('output/' . $outputImg)) {
         }
         
         function shareImage() {
-            window.open('share.php?img=' + encodeURIComponent(filename) + '&name=' + encodeURIComponent(customerName), '_blank', 'width=600,height=700');
+            window.open('share.php?img=' + encodeURIComponent(filename) + '&name=' + encodeURIComponent(customerName), '_blank');
         }
     </script>
 </body>
