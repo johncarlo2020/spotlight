@@ -263,8 +263,8 @@ if (!$outputImg || !file_exists('output/' . $outputImg)) {
     
     <div class="controls-bottom" data-animate="slide-in-up" data-delay="400">
         <div class="control-panel">
-            <button class="action-btn btn-download" onclick="downloadImage()">
-                <i class="fas fa-download"></i> Download
+            <button class="action-btn btn-download" onclick="printImage()">
+                <i class="fas fa-print"></i> Print
             </button>
             <button class="action-btn btn-share" onclick="shareImage()">
                 <i class="fas fa-share-alt"></i> Share
@@ -280,11 +280,51 @@ if (!$outputImg || !file_exists('output/' . $outputImg)) {
         const filename = '<?php echo htmlspecialchars($outputImg); ?>';
         const customerName = '<?php echo htmlspecialchars($customerName); ?>';
         
-        function downloadImage() {
-            const link = document.createElement('a');
-            link.href = 'output/' + filename;
-            link.download = 'spotlight_' + customerName.replace(/\s+/g, '_') + '.png';
-            link.click();
+        function printImage() {
+            const imagePath = 'output/' + filename;
+            // Create a new window for printing
+            const printWindow = window.open('', '_blank');
+            
+            // Write the HTML content for printing
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Print Image</title>
+                    <style>
+                        body {
+                            margin: 0;
+                            padding: 0;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            min-height: 100vh;
+                            background: white;
+                        }
+                        img {
+                            max-width: 100%;
+                            max-height: 100vh;
+                            object-fit: contain;
+                        }
+                        @media print {
+                            body {
+                                margin: 0;
+                            }
+                            img {
+                                max-width: 100%;
+                                height: auto;
+                                page-break-inside: avoid;
+                            }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <img src="${imagePath}" alt="Spotlight Image" onload="window.print(); window.close();">
+                </body>
+                </html>
+            `);
+            
+            printWindow.document.close();
         }
         
         function shareImage() {
