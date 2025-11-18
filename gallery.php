@@ -52,30 +52,78 @@ function getCustomerNameFromFilename($filename) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spotlight Gallery</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/gallery.css">
+    <style>
+        /* Animation styles */
+        [data-animate] {
+            opacity: 0;
+        }
+        
+        .animate-fade-in-down {
+            animation: fadeInDown 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        
+        .animate-fade-in-left {
+            animation: fadeInLeft 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    </style>
 </head>
 <body>
     <a href="index.php" class="back-btn" data-animate="fade-in-left">← Back to Generator</a>
     
-    <div class="container">
-        <div class="header" data-animate="fade-in-down">
-            <div class="logo">
-                <img src="logo.png" alt="Spotlight Logo">
-            </div>
-            <h1>SPOTLIGHT GALLERY</h1>
-            <p>Browse all your amazing spotlight creations</p>
-            <div class="stats">
-                <?php echo $totalImages; ?> Total Images
-            </div>
+    <div class="header">
+        <div class="logo">
+            <img src="logo.png" alt="Spotlight Logo">
         </div>
-        
-        <?php if (empty($currentImages)): ?>
-            <div class="empty-state" data-animate="fade-in-up" data-delay="200">
-                <h2>No Images Yet</h2>
-                <p>Create your first spotlight image to see it here!</p>
-            </div>
-        <?php else: ?>
-            <div class="gallery-grid" data-animate="fade-in-up" data-delay="300">
+        <h1>SPOTLIGHT GALLERY</h1>
+        <p>Browse all your amazing spotlight creations</p>
+    </div>
+    
+    <?php if (empty($currentImages)): ?>
+        <div class="empty-state" data-animate="fade-in-up" data-delay="200">
+            <h2>No Images Yet</h2>
+            <p>Create your first spotlight image to see it here!</p>
+        </div>
+    <?php else: ?>
+        <div class="gallery-grid" data-animate="fade-in-up" data-delay="300">
                 <?php foreach ($currentImages as $index => $image): ?>
                     <div class="image-card">
                         <div class="image-wrapper">
@@ -101,8 +149,11 @@ function getCustomerNameFromFilename($filename) {
             
             <?php if ($totalPages > 1): ?>
                 <div class="pagination">
+                    <div class="stats">
+                        <?php echo $totalImages; ?> Total Images
+                    </div>
                     <?php if ($currentPage > 1): ?>
-                        <a href="?page=<?php echo $currentPage - 1; ?>">‹ Previous</a>
+                        <a href="#" onclick="event.preventDefault(); window.location.href='?page=<?php echo $currentPage - 1; ?>'; return false;">‹ Previous</a>
                     <?php else: ?>
                         <span class="disabled">‹ Previous</span>
                     <?php endif; ?>
@@ -111,15 +162,21 @@ function getCustomerNameFromFilename($filename) {
                         <?php if ($i == $currentPage): ?>
                             <span class="current"><?php echo $i; ?></span>
                         <?php else: ?>
-                            <a href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                            <a href="#" onclick="event.preventDefault(); window.location.href='?page=<?php echo $i; ?>'; return false;"><?php echo $i; ?></a>
                         <?php endif; ?>
                     <?php endfor; ?>
                     
                     <?php if ($currentPage < $totalPages): ?>
-                        <a href="?page=<?php echo $currentPage + 1; ?>">Next ›</a>
+                        <a href="#" onclick="event.preventDefault(); window.location.href='?page=<?php echo $currentPage + 1; ?>'; return false;">Next ›</a>
                     <?php else: ?>
                         <span class="disabled">Next ›</span>
                     <?php endif; ?>
+                </div>
+            <?php else: ?>
+                <div class="pagination">
+                    <div class="stats">
+                        <?php echo $totalImages; ?> Total Images
+                    </div>
                 </div>
             <?php endif; ?>
         <?php endif; ?>

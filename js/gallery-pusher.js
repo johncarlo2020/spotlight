@@ -49,12 +49,12 @@ function createToaster(type, title, message, duration = 4000) {
         toasterContainer.id = 'toaster-container';
         toasterContainer.style.cssText = `
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: 80px;
+            right: 30px;
             z-index: 10000;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         `;
         document.body.appendChild(toasterContainer);
     }
@@ -65,39 +65,58 @@ function createToaster(type, title, message, duration = 4000) {
     
     // Define colors based on type
     const colors = {
-        success: { bg: '#28a745', border: '#1e7e34' },
-        info: { bg: '#17a2b8', border: '#117a8b' },
-        warning: { bg: '#ffc107', border: '#e0a800' },
-        error: { bg: '#dc3545', border: '#bd2130' }
+        success: { accent: '#28a745' },
+        info: { accent: '#17a2b8' },
+        warning: { accent: '#ffc107' },
+        error: { accent: '#dc3545' }
     };
     
     const color = colors[type] || colors.info;
     
     toaster.innerHTML = `
         <div style="
-            background: ${color.bg};
+            background: rgba(20, 20, 30, 0.95);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
             color: white;
             padding: 16px 20px;
-            border-radius: 8px;
-            border-left: 4px solid ${color.border};
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.1);
-            min-width: 300px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5),
+                        0 0 0 1px rgba(255, 255, 255, 0.05),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            min-width: 320px;
             max-width: 400px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            animation: toasterSlideIn 0.4s ease-out;
+            font-family: 'Montserrat', 'Segoe UI', sans-serif;
+            animation: toasterSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
-            transition: transform 0.2s ease;
-        " onmouseover="this.style.transform='translateX(-5px)'" onmouseout="this.style.transform='translateX(0)'">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        " onmouseover="this.style.transform='translateX(-8px)'; this.style.borderColor='rgba(255,255,255,0.2)'" onmouseout="this.style.transform='translateX(0)'; this.style.borderColor='rgba(255,255,255,0.1)'">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;">
                 <div style="flex: 1;">
-                    <div style="font-weight: bold; font-size: 14px; margin-bottom: 4px;">
+                    <div style="font-weight: 600; font-size: 14px; margin-bottom: 6px; color: #fff;">
                         ${title}
                     </div>
-                    <div style="font-size: 13px; opacity: 0.95; line-height: 1.4;">
+                    <div style="font-size: 13px; color: rgba(255, 255, 255, 0.8); line-height: 1.5;">
                         ${message}
                     </div>
                 </div>
-                <div style="margin-left: 10px; cursor: pointer; font-size: 16px; opacity: 0.8; hover: opacity: 1;" onclick="this.parentElement.parentElement.parentElement.remove()">
+                <div style="
+                    width: 24px;
+                    height: 24px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 50%;
+                    background: rgba(255, 255, 255, 0.1);
+                    cursor: pointer;
+                    font-size: 18px;
+                    color: rgba(255, 255, 255, 0.7);
+                    transition: all 0.2s ease;
+                    flex-shrink: 0;
+                " onclick="event.stopPropagation(); this.parentElement.parentElement.parentElement.remove()" onmouseover="this.style.background='rgba(255,255,255,0.2)'; this.style.color='#fff'" onmouseout="this.style.background='rgba(255,255,255,0.1)'; this.style.color='rgba(255,255,255,0.7)'">
                     ×
                 </div>
             </div>
@@ -105,10 +124,11 @@ function createToaster(type, title, message, duration = 4000) {
                 position: absolute;
                 bottom: 0;
                 left: 0;
-                height: 3px;
-                background: rgba(255,255,255,0.3);
+                width: 100%;
+                height: 2px;
+                background: linear-gradient(90deg, ${color.accent}, transparent);
                 animation: toasterProgress ${duration}ms linear;
-                border-radius: 0 0 4px 4px;
+                opacity: 0.5;
             "></div>
         </div>
     `;
