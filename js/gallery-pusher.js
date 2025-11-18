@@ -29,9 +29,9 @@ function addNewImageToGallery(imageData) {
     // Insert at the beginning of gallery
     galleryGrid.insertBefore(newImageCard, galleryGrid.firstChild);
     
-    // Remove last image if we're at the limit (9 images per page)
+    // Remove last image if we're at the limit (10 images per page)
     const imageCards = galleryGrid.querySelectorAll('.image-card');
-    if (imageCards.length > 9) {
+    if (imageCards.length > 10) {
         imageCards[imageCards.length - 1].remove();
     }
 }

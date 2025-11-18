@@ -29,7 +29,7 @@ usort($images, function($a, $b) {
 });
 
 // Pagination
-$itemsPerPage = 9;
+$itemsPerPage = 10;
 $currentPage = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $totalImages = count($images);
 $totalPages = ceil($totalImages / $itemsPerPage);
