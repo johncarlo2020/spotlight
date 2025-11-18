@@ -6,17 +6,21 @@ A real-time photo booth application that allows users to upload photos, draw/doo
 
 ### 🎨 Core Functionality
 - **Image Upload & Processing** - Upload photos with automatic resizing and cropping to match template dimensions
-- **Interactive Doodle Canvas** - Draw on uploaded images using PixiJS with multiple colors and brush tools
+- **Interactive Doodle Canvas** - Draw on uploaded images using PixiJS with multiple colors, brush sizes, and eraser tool
 - **Template Overlay** - Automatic overlay of transparent PNG template on user photos
-- **Custom Text** - Dynamic "STARRING [Name]" text generation with custom fonts
-- **Real-time Gallery** - Live gallery updates using Pusher WebSockets
-- **QR Code Sharing** - Generate QR codes for easy image sharing
-- **Print Functionality** - One-click printing with optimized layout
+- **Custom Text** - Dynamic "STARRING [Name]" text generation with Montserrat Regular font (36pt)
+- **Real-time Gallery** - Live gallery updates using Pusher WebSockets with toast notifications
+- **QR Code Sharing** - Generate QR codes with loading placeholders for easy image sharing
+- **Print Functionality** - One-click printing with optimized layout and auto-close
+- **Modern UI** - Dark glass morphism design with smooth entry animations
+- **Pagination** - Gallery displays 10 images per page (5 columns × 2 rows) without scrolling
 
 ### 🎨 Theme System
-- **Multiple Color Themes** - Pre-built themes (Fiery Red, Ocean Blue, Purple Haze, etc.)
+- **Unified Design Language** - Consistent dark glass morphism across all pages
 - **CSS Variables** - Easy theme customization through centralized variables
 - **Responsive Design** - Mobile-first design that works on all devices
+- **Animation System** - Reusable entry animations (fadeInUp, fadeInDown, fadeInLeft, fadeInRight, fadeInScale, slideInUpCentered)
+- **Modern Aesthetics** - Dark translucent cards with backdrop blur, subtle borders, and refined shadows
 
 ## Technical Stack
 
@@ -28,9 +32,10 @@ A real-time photo booth application that allows users to upload photos, draw/doo
 
 ### Frontend
 - **PixiJS v8.13.2** - Hardware-accelerated 2D canvas for drawing
-- **Pusher JS Client** - Real-time updates
+- **Pusher JS Client** - Real-time updates with toast notifications
 - **Vanilla JavaScript** - No framework dependencies
-- **CSS3** - Modern styling with gradients and animations
+- **CSS3** - Modern styling with glass morphism, gradients, and animations
+- **Montserrat Font** - Professional typography (Regular and SemiBold)
 
 ### Libraries & APIs
 - **QR Code API** - QR code generation for sharing
@@ -93,31 +98,38 @@ chmod 777 output samples
 ```
 spotlight/
 ├── css/
-│   ├── styles.css          # Main centralized styles with CSS variables
-│   ├── doodle.css          # Doodle page specific styles
-│   ├── gallery.css         # Gallery grid and card styles
+│   ├── styles.css          # Main centralized styles with CSS variables & animations
+│   ├── doodle.css          # Doodle page with loading screen & progress bar
+│   ├── gallery.css         # Gallery grid (5×2 layout), modal, and cards
+│   ├── preview.css         # Preview page with print functionality
 │   ├── view.css            # Image view page styles
-│   └── share.css           # QR share page styles
+│   └── share.css           # QR share page with modern card design
 ├── js/
+│   ├── animations.js       # Reusable animation initialization system
 │   ├── index.js            # Upload form handling
-│   ├── doodle.js           # PixiJS drawing application (270+ lines)
-│   ├── gallery.js          # QR modal and print functions
-│   ├── gallery-pusher.js   # Real-time update helpers
-│   ├── view.js             # Print functionality
+│   ├── doodle.js           # PixiJS drawing application with loading states
+│   ├── gallery.js          # QR modal, print functions, and share
+│   ├── gallery-pusher.js   # Real-time update helpers with toast system
+│   ├── preview.js          # Print functionality
+│   ├── view.js             # Image view and print
 │   └── share.js            # Clipboard operations
-├── font/                   # Custom fonts
+├── font/
+│   ├── Montserrat-Regular.ttf    # Body text and overlays (36pt)
+│   └── Montserrat-SemiBold.ttf   # Headings and emphasis
 ├── template/
 │   └── template.png        # Main overlay template (1200x1800)
 ├── output/                 # Generated images (auto-created)
 ├── samples/                # Sample gallery images
 ├── vendor/                 # Composer dependencies
 ├── config.php              # Pusher configuration
-├── index.php               # Upload page
-├── doodle.php              # Drawing canvas page
-├── process.php             # Image processing logic
-├── gallery.php             # Image gallery with real-time updates
+├── pusher_helper.php       # Pusher connection helper class
+├── index.php               # Upload page with animations
+├── doodle.php              # Drawing canvas with progress bar
+├── process.php             # Image processing (no shadow, 36pt font)
+├── preview.php             # Preview page with print button
+├── gallery.php             # Gallery (10 per page, 5×2 grid, no scroll)
 ├── view.php                # Single image view
-├── share.php               # QR code sharing
+├── share.php               # QR code sharing with modern modal
 └── composer.json           # Dependencies
 ```
 
@@ -275,9 +287,11 @@ graph LR
 - Redirects to doodle page
 
 ### 2. Doodle (Optional)
-- PixiJS canvas loads the uploaded image
+- PixiJS canvas loads the uploaded image with elegant progress bar
 - User can draw with 4 color options (White, Red, Green, Blue)
+- Brush size adjustment and eraser tool
 - Clear button to remove all drawings
+- Loading screen with pulsing logo during canvas initialization
 - Save button to process the image
 
 ### 3. Image Processing
@@ -286,17 +300,20 @@ graph LR
 2. Load uploaded image
 3. Calculate aspect ratio and resize/crop to match template
 4. Overlay template PNG on user image
-5. Add "STARRING [NAME]" text at bottom
-6. Save to output directory
+5. Add "STARRING [NAME]" text at bottom using Montserrat Regular (36pt, no shadow)
+6. Save to output directory with unique timestamp filename
 7. Trigger Pusher notification for real-time gallery update
-8. Display result to user
+8. Redirect to preview page with result
 
-### 4. Gallery
-- Displays all processed images in a responsive grid
+### 4. Gallery (Redesigned)
+- Displays 10 images per page in 5×2 grid layout
+- No page scrolling - fits viewport perfectly
 - Real-time updates when new images are created
-- QR code generation for sharing
-- Print functionality
-- Pagination (9 images per page)
+- Modern dark glass morphism cards with hover effects
+- QR code modal with loading placeholder
+- Print and share buttons for each image
+- Pagination with total image count display
+- Toast notifications with modern design
 
 ## Image Processing Logic
 
@@ -316,11 +333,11 @@ If uploaded image is taller:
 ```
 
 ### Text Overlay
-- Font: Linotype DidotLTPro Headline
-- "STARRING" text: 30.72pt
-- Customer name: 46.08pt (uppercase)
-- Position: Centered, 8% from bottom
-- Colors: White text with black shadow
+- Font: Montserrat Regular (font/Montserrat-Regular.ttf)
+- Customer name: 36pt (uppercase)
+- Position: Centered at bottom
+- Colors: White text (no shadow for clean appearance)
+- Clean, modern typography matching UI design
 
 ## Print Specifications
 
@@ -355,9 +372,11 @@ $pusherEvent = 'new-image';
 
 ### Features
 - Live gallery updates without page refresh
-- Toast notifications for new images
-- Sound effects for notifications
+- Toast notifications with dark glass morphism design
+- Animated loading placeholders
 - Connection status indicators
+- No-scroll pagination (10 images per page)
+- Modern notification system with progress bars
 
 ## Customization
 
@@ -365,12 +384,26 @@ $pusherEvent = 'new-image';
 Edit `css/styles.css` root variables:
 ```css
 :root {
-    --primary-color: #eb3349;
-    --secondary-color: #f45c43;
-    --bg-dark-1: #1a0a0e;
-    --bg-dark-2: #2e1619;
+    --primary-red: #eb3349;
+    --secondary-red: #f45c43;
+    --bg-overlay: rgba(26, 26, 46, 0.4);  /* Glass morphism background */
+    --border-light: rgba(255, 255, 255, 0.1);
     /* ... more variables ... */
 }
+```
+
+### Animations
+Add custom animations in `css/styles.css`:
+```css
+@keyframes yourAnimation {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+```
+
+Then use with `data-animate` attribute:
+```html
+<div data-animate="fade-in-up" data-delay="200">Content</div>
 ```
 
 ### Template
@@ -388,9 +421,27 @@ Edit `doodle.php` to add more color options:
 ```
 
 ### Font
-Replace font file in `font/` directory and update `process.php`:
+Replace font files in `font/` directory and update `process.php`:
 ```php
-$fontPath = __DIR__ . '/font/YourCustomFont.ttf';
+$fontPath = __DIR__ . '/font/Montserrat-Regular.ttf';
+$nameFontSize = 36; // Font size in points
+```
+
+### Gallery Layout
+Edit `css/gallery.css` to change grid layout:
+```css
+.gallery-grid {
+    grid-template-columns: repeat(5, 1fr);  /* 5 columns */
+    grid-template-rows: repeat(2, 1fr);     /* 2 rows */
+}
+```
+
+### Loading Screen
+Customize doodle loading in `css/doodle.css`:
+```css
+.loading-screen {
+    /* Customize background, logo, progress bar */
+}
 ```
 
 ## Troubleshooting
@@ -425,10 +476,13 @@ $fontPath = __DIR__ . '/font/YourCustomFont.ttf';
 ## Performance Notes
 
 - Images are processed server-side (no client-side resize)
-- PixiJS uses WebGL hardware acceleration
+- PixiJS uses WebGL hardware acceleration with fallback to canvas
 - Pusher uses WebSockets for minimal overhead
-- Gallery pagination limits DOM nodes
+- Gallery pagination limits DOM nodes (10 per page, no scrolling)
 - Lazy loading for gallery images
+- Modern backdrop-filter with hardware acceleration
+- Optimized animations using CSS transforms and opacity
+- Reusable animation system reduces JavaScript overhead
 
 ## Security Considerations
 
@@ -469,6 +523,17 @@ For issues or questions, please open an issue on the repository.
 
 ---
 
-**Version**: 2.0  
-**Last Updated**: November 2025  
-**Author**: [Your Name/Team]
+**Version**: 3.0  
+**Last Updated**: November 19, 2025  
+**Major Updates**:
+- Redesigned UI with dark glass morphism theme
+- Reusable animation system across all pages
+- Gallery pagination (5×2 grid, no scroll)
+- Modern loading states and progress bars
+- Improved typography with Montserrat font family
+- Enhanced modal designs with loading placeholders
+- Toast notification system with modern styling
+- Print functionality improvements
+- Consistent design language across all pages
+
+---
