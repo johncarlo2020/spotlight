@@ -1,0 +1,384 @@
+/* ============================================
+   GALLERY PAGE SPECIFIC STYLES
+   ============================================ */
+
+body {
+    background: #000000;
+    padding: 20px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 30px 0;
+}
+
+.header .logo {
+    margin-bottom: 20px;
+}
+
+.header .logo img {
+    max-width: 250px;
+    height: auto;
+    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.2));
+}
+
+.header h1 {
+    color: #fff;
+    font-size: 3rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    margin-bottom: 10px;
+    display: none;
+}
+
+.header p {
+    color: #ccc;
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    display: none;
+}
+
+.stats {
+    display: inline-block;
+    background: #1a1a1a;
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: 1px solid #333;
+    color: #fff;
+    font-weight: 600;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 25px;
+    margin-bottom: 40px;
+}
+
+.image-card {
+    background: #1a1a1a;
+    border-radius: 15px;
+    overflow: hidden;
+    border: 1px solid #333;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.image-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(255, 255, 255, 0.1);
+    border-color: #666;
+}
+
+.image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+}
+
+.image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.image-card:hover .image-wrapper img {
+    transform: scale(1.05);
+}
+
+.image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 100%);
+    display: flex;
+    align-items: flex-end;
+    padding: 20px;
+}
+
+.image-info {
+    color: white;
+}
+
+.image-info h3 {
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+    color: #fff;
+}
+
+.image-info p {
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+.card-actions {
+    padding: 15px;
+    background: #111;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin: 40px 0;
+}
+
+.pagination a, .pagination span {
+    padding: 12px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.pagination a {
+    background: #1a1a1a;
+    color: #fff;
+    border: 1px solid #333;
+}
+
+.pagination a:hover {
+    background: #666;
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.pagination .current {
+    background: #fff;
+    color: #000;
+    border: 1px solid #fff;
+}
+
+.pagination .disabled {
+    background: #333;
+    color: #666;
+    cursor: not-allowed;
+}
+
+.back-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: #1a1a1a;
+    color: #fff;
+    padding: 12px 20px;
+    border: 1px solid #333;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.back-btn:hover {
+    background: #666;
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 100px 20px;
+}
+
+.empty-state h2 {
+    color: #666;
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.empty-state p {
+    color: #999;
+    font-size: 1.2rem;
+}
+
+/* QR Code Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: #111111;
+    margin: 5% auto;
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+    border: 1px solid #333;
+    position: relative;
+}
+
+.close-modal {
+    color: #fff;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    position: absolute;
+    right: 15px;
+    top: 10px;
+}
+
+.close-modal:hover {
+    color: #aaa;
+}
+
+.modal h3 {
+    color: #fff;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+}
+
+.modal-qr {
+    margin: 20px 0;
+    padding: 20px;
+    background: #1a1a1a;
+    border-radius: 10px;
+    border: 1px solid #333;
+}
+
+.modal-url {
+    background: #1a1a1a;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px 0;
+    border: 2px solid #333;
+    word-break: break-all;
+}
+
+.modal-url input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    color: #fff;
+    text-align: center;
+    font-size: 14px;
+}
+
+.copy-btn {
+    background: #666;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    margin: 10px;
+}
+
+.copy-btn:hover {
+    background: #888;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(300px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes toasterSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(100%) scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+@keyframes toasterSlideOut {
+    from {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100%) scale(0.8);
+    }
+}
+
+@keyframes toasterProgress {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0%;
+    }
+}
+
+/* iPad Optimization */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .gallery-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+    
+    .image-wrapper {
+        height: 200px;
+    }
+    
+    .header h1 {
+        font-size: 2.5rem;
+    }
+}
+
+/* Mobile Optimization */
+@media (max-width: 767px) {
+    .gallery-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .header h1 {
+        font-size: 2rem;
+    }
+    
+    .pagination {
+        flex-wrap: wrap;
+    }
+    
+    .back-btn {
+        position: static;
+        margin-bottom: 20px;
+        display: inline-block;
+    }
+}

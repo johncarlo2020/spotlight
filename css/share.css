@@ -1,0 +1,157 @@
+/**
+ * Share Page Styles
+ * QR code sharing interface with Fiery Red theme
+ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1a0a0e 0%, #2e1619 100%);
+    min-height: 100vh;
+    padding: 20px;
+    color: #ffffff;
+}
+
+.container {
+    background: linear-gradient(135deg, #2e1619 0%, #1a0a0e 100%);
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 20px 40px rgba(235, 51, 73, 0.2);
+    border: 1px solid rgba(235, 51, 73, 0.3);
+    text-align: center;
+}
+
+.logo {
+    margin-bottom: 30px;
+}
+
+.logo img {
+    max-width: 200px;
+    height: auto;
+    filter: drop-shadow(0 0 15px rgba(235, 51, 73, 0.4));
+}
+
+h2 {
+    color: #fff;
+    font-size: 2.2rem;
+    margin-bottom: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.customer-name {
+    color: #fff;
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    padding: 15px;
+    background: rgba(235, 51, 73, 0.1);
+    border-radius: 10px;
+    border: 1px solid rgba(235, 51, 73, 0.3);
+}
+
+.qr-code {
+    margin: 30px 0;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 10px;
+    border: 2px solid rgba(235, 51, 73, 0.3);
+    display: inline-block;
+}
+
+.qr-code img {
+    border-radius: 8px;
+}
+
+.share-url {
+    background: rgba(235, 51, 73, 0.1);
+    padding: 15px;
+    border-radius: 8px;
+    word-break: break-all;
+    margin: 20px 0;
+    border: 2px solid rgba(235, 51, 73, 0.3);
+}
+
+.share-url input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    text-align: center;
+    font-size: 14px;
+    color: #fff;
+    padding: 5px;
+    outline: none;
+}
+
+.copy-btn {
+    background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+    color: #fff;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 10px;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    font-size: 16px;
+    text-transform: uppercase;
+    box-shadow: 0 4px 15px rgba(235, 51, 73, 0.4);
+}
+
+.copy-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(235, 51, 73, 0.6);
+}
+
+.close-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 12px 25px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-size: 16px;
+}
+
+.close-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+}
+
+.instructions {
+    color: #ccc;
+    margin: 20px 0;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .container {
+        margin: 20px;
+        padding: 25px;
+    }
+    
+    h2 {
+        font-size: 1.8rem;
+    }
+    
+    .copy-btn, .close-btn {
+        width: 100%;
+        margin: 5px 0;
+    }
+}

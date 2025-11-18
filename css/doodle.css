@@ -1,0 +1,325 @@
+/* ============================================
+   DOODLE PAGE SPECIFIC STYLES
+   ============================================ */
+
+body {
+    height: 100vh;
+    overflow: hidden;
+    padding: 0;
+    display: block;
+}
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 15px;
+    text-align: center;
+    z-index: 100;
+    background: linear-gradient(180deg, rgba(10, 10, 10, 0.9) 0%, rgba(10, 10, 10, 0) 100%);
+}
+
+.header .logo {
+    margin-bottom: 0;
+}
+
+.header .logo img {
+    max-width: 180px;
+    height: auto;
+    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.2));
+    margin-top: 30px;
+}
+
+h1 {
+    display: none;
+}
+
+.subtitle {
+    display: none;
+}
+
+.canvas-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+    padding: 80px 20px 100px 20px;
+    pointer-events: none;
+}
+
+#pixiCanvas {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 100%;
+    max-height: 100%;
+    pointer-events: none;
+}
+
+#pixiCanvas canvas {
+    cursor: crosshair;
+    display: block;
+    max-width: calc(100vw - 120px);
+    max-height: calc(100vh - 180px);
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    pointer-events: auto;
+    touch-action: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+/* Unified Bottom Controls */
+.controls-left {
+    position: fixed;
+    left: 50%;
+    bottom: 74px;
+    transform: translateX(-50%);
+    z-index: 200;
+}
+
+.control-panel {
+    background: rgba(26, 26, 46, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 50px;
+    padding: 8px 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.control-panel label {
+    display: none;
+}
+
+.color-palette {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+}
+
+.color-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.color-btn:hover {
+    transform: scale(1.15);
+    border-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+}
+
+.color-btn.active {
+    border-color: #fff;
+    border-width: 3px;
+    transform: scale(1.1);
+}
+
+.color-btn.active::after {
+    display: none;
+}
+
+/* Action Buttons Inside Control Panel */
+.button-group {
+    display: flex;
+    gap: 8px;
+    padding-left: 15px;
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.action-btn.btn-clear {
+    background: linear-gradient(135deg, rgba(240, 147, 251, 0.9) 0%, rgba(245, 87, 108, 0.9) 100%);
+}
+
+.action-btn.btn-clear:hover {
+    background: linear-gradient(135deg, rgba(240, 147, 251, 1) 0%, rgba(245, 87, 108, 1) 100%);
+}
+
+.action-btn.btn-process {
+    background: linear-gradient(135deg, rgba(235, 51, 73, 0.9) 0%, rgba(244, 92, 67, 0.9) 100%);
+}
+
+.action-btn.btn-process:hover {
+    background: linear-gradient(135deg, rgba(245, 87, 108, 1) 0%, rgba(255, 107, 107, 1) 100%);
+}
+
+/* Hide the separate controls-right container */
+.controls-right {
+    display: none;
+}
+
+#loadingOverlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+
+.loading-content {
+    text-align: center;
+}
+
+.spinner {
+    border: 4px solid #333;
+    border-top: 4px solid #fff;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.98) 0%, rgba(16, 21, 62, 0.98) 100%);
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+    text-align: center;
+}
+
+.modal-content h3 {
+    color: #fff;
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.modal-content p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1rem;
+    margin-bottom: 25px;
+    line-height: 1.5;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.modal-btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 100px;
+}
+
+.btn-cancel {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-cancel:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+.btn-confirm {
+    background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+    color: #fff;
+}
+
+.btn-confirm:hover {
+    background: linear-gradient(135deg, #f5576c 0%, #ff6b6b 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(235, 51, 73, 0.4);
+}
+
+.modal.show {
+    display: flex;
+}
+
+@media (max-width: 768px) {
+    .header {
+        padding: 10px;
+    }
+    
+    .header .logo img {
+        max-width: 140px;
+    }
+    
+    .canvas-container {
+        padding: 60px 10px 80px 10px;
+    }
+    
+    .controls-left {
+        bottom: 80px;
+    }
+    
+    .control-panel {
+        padding: 6px 12px;
+        gap: 12px;
+    }
+    
+    .color-palette {
+        gap: 8px;
+    }
+    
+    .color-btn {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .button-group {
+        gap: 6px;
+        padding-left: 12px;
+    }
+    
+    .action-btn {
+        padding: 6px 14px;
+        font-size: 12px;
+    }
+}
