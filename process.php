@@ -160,8 +160,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['image']) && isset($_
     imagedestroy($templateImg);
     imagedestroy($resizedTemplate);
 
-    // Redirect back to index.php with image filename as GET parameter
-    header('Location: index.php?output=' . urlencode($outputFile) . '&name=' . urlencode($customerName));
+    // Redirect to preview page instead of back to index
+    header('Location: preview.php?output=' . urlencode($outputFile) . '&name=' . urlencode($customerName));
     exit;
 } else {
     echo 'Invalid request.';
