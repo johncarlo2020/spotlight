@@ -15,6 +15,9 @@ let originalImageData = null;
 let customerName = '';
 let instructionText = null;
 let hasDrawn = false;
+let templateSprite = null;
+let animatedLine = null;
+let borderGraphics = null;
 
 // Drawing area bounds (red box region)
 const DRAW_AREA = {
@@ -220,6 +223,7 @@ async function initPixi(imageData) {
         
         border.stroke();
         app.stage.addChild(border);
+        borderGraphics = border; // Store reference for hiding during save
         
         // Add floating instruction text at the top of the draw area
         instructionText = new PIXI.Text({
@@ -239,7 +243,7 @@ async function initPixi(imageData) {
         app.stage.addChild(instructionText);
         
         // Add animated drawing line below the text
-        const animatedLine = new PIXI.Graphics();
+        animatedLine = new PIXI.Graphics();
         app.stage.addChild(animatedLine);
         
         // Animate the instruction text (floating and blinking)
@@ -299,7 +303,7 @@ async function initPixi(imageData) {
         templateImg.onload = () => {
             console.log('✅ Template loaded successfully');
             const templateTexture = PIXI.Texture.from(templateImg);
-            const templateSprite = new PIXI.Sprite(templateTexture);
+            templateSprite = new PIXI.Sprite(templateTexture);
             templateSprite.width = TARGET_WIDTH;
             templateSprite.height = TARGET_HEIGHT;
             templateSprite.alpha = 0.4; // 40% opacity for better visibility
@@ -520,20 +524,26 @@ async function processImage() {
     
     document.getElementById('loadingOverlay').style.display = 'flex';
     
-    // Temporarily hide the template overlay before rendering
-    const templateWasVisible = templateOverlay && templateOverlay.visible;
-    if (templateOverlay) {
-        templateOverlay.visible = false;
-    }
+    // Temporarily hide UI elements before rendering
+    const templateWasVisible = templateSprite && templateSprite.visible;
+    const borderWasVisible = borderGraphics && borderGraphics.visible;
+    const textWasVisible = instructionText && instructionText.visible;
+    const lineWasVisible = animatedLine && animatedLine.visible;
+    
+    if (templateSprite) templateSprite.visible = false;
+    if (borderGraphics) borderGraphics.visible = false;
+    if (instructionText) instructionText.visible = false;
+    if (animatedLine) animatedLine.visible = false;
     
     // Render the canvas to a data URL
     const renderer = app.renderer;
     const canvas = renderer.extract.canvas(app.stage);
     
-    // Restore template overlay visibility
-    if (templateOverlay && templateWasVisible) {
-        templateOverlay.visible = true;
-    }
+    // Restore UI elements visibility
+    if (templateSprite && templateWasVisible) templateSprite.visible = true;
+    if (borderGraphics && borderWasVisible) borderGraphics.visible = true;
+    if (instructionText && textWasVisible) instructionText.visible = true;
+    if (animatedLine && lineWasVisible) animatedLine.visible = true;
     
     canvas.toBlob(async (blob) => {
         // Create form data
