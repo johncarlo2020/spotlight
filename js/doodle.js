@@ -19,7 +19,8 @@ const DRAW_AREA = {
     x: 50,
     y: 350,
     width: 1100,
-    height: 1000
+    height: 1000,
+    radius: 20  // Border radius for rounded corners
 };
 
 // Check if point is within drawing area
@@ -108,44 +109,113 @@ async function initPixi(imageData) {
         drawingContainer = new PIXI.Container();
         // Add mask to restrict drawing to the red box area
         const mask = new PIXI.Graphics();
-        mask.rect(DRAW_AREA.x, DRAW_AREA.y, DRAW_AREA.width, DRAW_AREA.height);
+        mask.roundRect(DRAW_AREA.x, DRAW_AREA.y, DRAW_AREA.width, DRAW_AREA.height, DRAW_AREA.radius);
         mask.fill(0xffffff);
         drawingContainer.mask = mask;
         app.stage.addChild(drawingContainer);
         app.stage.addChild(mask); // Mask needs to be on stage
         
-        // Add dashed border to show drawing area
+        // Add dashed border to show drawing area with rounded corners
         const border = new PIXI.Graphics();
         border.setStrokeStyle({
             width: 3,
             color: 0xffffff,
             alpha: 0.6
         });
-        // Draw dashed rectangle
+        
+        // Draw dashed rounded rectangle using path segments
         const dashLength = 15;
         const gapLength = 10;
-        const totalLength = dashLength + gapLength;
+        const totalDashLength = dashLength + gapLength;
+        const r = DRAW_AREA.radius;
         
-        // Top border
-        for (let x = DRAW_AREA.x; x < DRAW_AREA.x + DRAW_AREA.width; x += totalLength) {
-            border.moveTo(x, DRAW_AREA.y);
-            border.lineTo(Math.min(x + dashLength, DRAW_AREA.x + DRAW_AREA.width), DRAW_AREA.y);
+        // Calculate perimeter segments (excluding rounded corners)
+        const topLength = DRAW_AREA.width - 2 * r;
+        const rightLength = DRAW_AREA.height - 2 * r;
+        const bottomLength = DRAW_AREA.width - 2 * r;
+        const leftLength = DRAW_AREA.height - 2 * r;
+        
+        // Top edge (with dashes)
+        let x = DRAW_AREA.x + r;
+        const topY = DRAW_AREA.y;
+        while (x < DRAW_AREA.x + DRAW_AREA.width - r) {
+            border.moveTo(x, topY);
+            border.lineTo(Math.min(x + dashLength, DRAW_AREA.x + DRAW_AREA.width - r), topY);
+            x += totalDashLength;
         }
-        // Right border
-        for (let y = DRAW_AREA.y; y < DRAW_AREA.y + DRAW_AREA.height; y += totalLength) {
-            border.moveTo(DRAW_AREA.x + DRAW_AREA.width, y);
-            border.lineTo(DRAW_AREA.x + DRAW_AREA.width, Math.min(y + dashLength, DRAW_AREA.y + DRAW_AREA.height));
+        
+        // Top-right corner arc (dashed)
+        const cornerSegments = 8;
+        for (let i = 0; i < cornerSegments; i++) {
+            if (i % 2 === 0) {
+                const startAngle = -Math.PI / 2 + (i / cornerSegments) * (Math.PI / 2);
+                const endAngle = -Math.PI / 2 + ((i + 0.5) / cornerSegments) * (Math.PI / 2);
+                const centerX = DRAW_AREA.x + DRAW_AREA.width - r;
+                const centerY = DRAW_AREA.y + r;
+                border.arc(centerX, centerY, r, startAngle, endAngle);
+            }
         }
-        // Bottom border
-        for (let x = DRAW_AREA.x + DRAW_AREA.width; x > DRAW_AREA.x; x -= totalLength) {
-            border.moveTo(x, DRAW_AREA.y + DRAW_AREA.height);
-            border.lineTo(Math.max(x - dashLength, DRAW_AREA.x), DRAW_AREA.y + DRAW_AREA.height);
+        
+        // Right edge (with dashes)
+        let y = DRAW_AREA.y + r;
+        const rightX = DRAW_AREA.x + DRAW_AREA.width;
+        while (y < DRAW_AREA.y + DRAW_AREA.height - r) {
+            border.moveTo(rightX, y);
+            border.lineTo(rightX, Math.min(y + dashLength, DRAW_AREA.y + DRAW_AREA.height - r));
+            y += totalDashLength;
         }
-        // Left border
-        for (let y = DRAW_AREA.y + DRAW_AREA.height; y > DRAW_AREA.y; y -= totalLength) {
-            border.moveTo(DRAW_AREA.x, y);
-            border.lineTo(DRAW_AREA.x, Math.max(y - dashLength, DRAW_AREA.y));
+        
+        // Bottom-right corner arc (dashed)
+        for (let i = 0; i < cornerSegments; i++) {
+            if (i % 2 === 0) {
+                const startAngle = 0 + (i / cornerSegments) * (Math.PI / 2);
+                const endAngle = 0 + ((i + 0.5) / cornerSegments) * (Math.PI / 2);
+                const centerX = DRAW_AREA.x + DRAW_AREA.width - r;
+                const centerY = DRAW_AREA.y + DRAW_AREA.height - r;
+                border.arc(centerX, centerY, r, startAngle, endAngle);
+            }
         }
+        
+        // Bottom edge (with dashes)
+        x = DRAW_AREA.x + DRAW_AREA.width - r;
+        const bottomY = DRAW_AREA.y + DRAW_AREA.height;
+        while (x > DRAW_AREA.x + r) {
+            border.moveTo(x, bottomY);
+            border.lineTo(Math.max(x - dashLength, DRAW_AREA.x + r), bottomY);
+            x -= totalDashLength;
+        }
+        
+        // Bottom-left corner arc (dashed)
+        for (let i = 0; i < cornerSegments; i++) {
+            if (i % 2 === 0) {
+                const startAngle = Math.PI / 2 + (i / cornerSegments) * (Math.PI / 2);
+                const endAngle = Math.PI / 2 + ((i + 0.5) / cornerSegments) * (Math.PI / 2);
+                const centerX = DRAW_AREA.x + r;
+                const centerY = DRAW_AREA.y + DRAW_AREA.height - r;
+                border.arc(centerX, centerY, r, startAngle, endAngle);
+            }
+        }
+        
+        // Left edge (with dashes)
+        y = DRAW_AREA.y + DRAW_AREA.height - r;
+        const leftX = DRAW_AREA.x;
+        while (y > DRAW_AREA.y + r) {
+            border.moveTo(leftX, y);
+            border.lineTo(leftX, Math.max(y - dashLength, DRAW_AREA.y + r));
+            y -= totalDashLength;
+        }
+        
+        // Top-left corner arc (dashed)
+        for (let i = 0; i < cornerSegments; i++) {
+            if (i % 2 === 0) {
+                const startAngle = Math.PI + (i / cornerSegments) * (Math.PI / 2);
+                const endAngle = Math.PI + ((i + 0.5) / cornerSegments) * (Math.PI / 2);
+                const centerX = DRAW_AREA.x + r;
+                const centerY = DRAW_AREA.y + r;
+                border.arc(centerX, centerY, r, startAngle, endAngle);
+            }
+        }
+        
         border.stroke();
         app.stage.addChild(border);
         
