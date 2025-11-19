@@ -263,14 +263,11 @@ if (!$outputImg || !file_exists('output/' . $outputImg)) {
     
     <div class="controls-bottom" data-animate="slide-in-up" data-delay="400">
         <div class="control-panel">
-            <button class="action-btn btn-download" onclick="printImage()">
-                <i class="fas fa-print"></i> Print
-            </button>
             <button class="action-btn btn-share" onclick="shareImage()">
                 <i class="fas fa-share-alt"></i> Share
             </button>
             <a href="index.php" class="action-btn btn-create">
-                <i class="fas fa-plus-circle"></i> Create New
+                <i class="fas fa-check-circle"></i> Done
             </a>
         </div>
     </div>

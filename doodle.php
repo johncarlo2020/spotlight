@@ -31,6 +31,9 @@
                 <div class="color-btn" style="background: #0000ff;" onclick="setColor('#0000ff', event)" title="Blue"></div>
             </div>
             <div class="button-group">
+                <button class="action-btn btn-undo" onclick="undoLastStroke()" title="Undo last stroke">
+                    <i class="fas fa-undo"></i> Undo
+                </button>
                 <button class="action-btn btn-clear" onclick="clearCanvas()">
                     <i class="fas fa-eraser"></i> Clear
                 </button>

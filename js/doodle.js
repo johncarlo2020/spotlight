@@ -8,10 +8,35 @@ let currentColor = 0xFFFFFF;
 let brushSize = 10;
 let startX, startY;
 let drawingHistory = [];
+let currentStroke = null;
 let uploadedImage = null;
 let tempGraphics = null;
 let originalImageData = null;
 let customerName = '';
+
+// Drawing area bounds (red box region)
+const DRAW_AREA = {
+    x: 50,
+    y: 350,
+    width: 1100,
+    height: 1000
+};
+
+// Check if point is within drawing area
+function isInDrawArea(x, y) {
+    return x >= DRAW_AREA.x && 
+           x <= DRAW_AREA.x + DRAW_AREA.width && 
+           y >= DRAW_AREA.y && 
+           y <= DRAW_AREA.y + DRAW_AREA.height;
+}
+
+// Clamp point to drawing area
+function clampToDrawArea(x, y) {
+    return {
+        x: Math.max(DRAW_AREA.x, Math.min(DRAW_AREA.x + DRAW_AREA.width, x)),
+        y: Math.max(DRAW_AREA.y, Math.min(DRAW_AREA.y + DRAW_AREA.height, y))
+    };
+}
 
 // Initialize PixiJS application
 async function initPixi(imageData) {
@@ -79,9 +104,69 @@ async function initPixi(imageData) {
         baseSprite.height = TARGET_HEIGHT;
         app.stage.addChild(baseSprite);
         
-        // Create drawing container
+        // Create drawing container (middle layer)
         drawingContainer = new PIXI.Container();
+        // Add mask to restrict drawing to the red box area
+        const mask = new PIXI.Graphics();
+        mask.rect(DRAW_AREA.x, DRAW_AREA.y, DRAW_AREA.width, DRAW_AREA.height);
+        mask.fill(0xffffff);
+        drawingContainer.mask = mask;
         app.stage.addChild(drawingContainer);
+        app.stage.addChild(mask); // Mask needs to be on stage
+        
+        // Add dashed border to show drawing area
+        const border = new PIXI.Graphics();
+        border.setStrokeStyle({
+            width: 3,
+            color: 0xffffff,
+            alpha: 0.6
+        });
+        // Draw dashed rectangle
+        const dashLength = 15;
+        const gapLength = 10;
+        const totalLength = dashLength + gapLength;
+        
+        // Top border
+        for (let x = DRAW_AREA.x; x < DRAW_AREA.x + DRAW_AREA.width; x += totalLength) {
+            border.moveTo(x, DRAW_AREA.y);
+            border.lineTo(Math.min(x + dashLength, DRAW_AREA.x + DRAW_AREA.width), DRAW_AREA.y);
+        }
+        // Right border
+        for (let y = DRAW_AREA.y; y < DRAW_AREA.y + DRAW_AREA.height; y += totalLength) {
+            border.moveTo(DRAW_AREA.x + DRAW_AREA.width, y);
+            border.lineTo(DRAW_AREA.x + DRAW_AREA.width, Math.min(y + dashLength, DRAW_AREA.y + DRAW_AREA.height));
+        }
+        // Bottom border
+        for (let x = DRAW_AREA.x + DRAW_AREA.width; x > DRAW_AREA.x; x -= totalLength) {
+            border.moveTo(x, DRAW_AREA.y + DRAW_AREA.height);
+            border.lineTo(Math.max(x - dashLength, DRAW_AREA.x), DRAW_AREA.y + DRAW_AREA.height);
+        }
+        // Left border
+        for (let y = DRAW_AREA.y + DRAW_AREA.height; y > DRAW_AREA.y; y -= totalLength) {
+            border.moveTo(DRAW_AREA.x, y);
+            border.lineTo(DRAW_AREA.x, Math.max(y - dashLength, DRAW_AREA.y));
+        }
+        border.stroke();
+        app.stage.addChild(border);
+        
+        // Load and overlay template on top with reduced opacity
+        const templateImg = new Image();
+        templateImg.onload = () => {
+            console.log('✅ Template loaded successfully');
+            const templateTexture = PIXI.Texture.from(templateImg);
+            const templateSprite = new PIXI.Sprite(templateTexture);
+            templateSprite.width = TARGET_WIDTH;
+            templateSprite.height = TARGET_HEIGHT;
+            templateSprite.alpha = 0.4; // 40% opacity for better visibility
+            templateSprite.interactive = false; // Don't block mouse events
+            templateSprite.eventMode = 'none'; // Pass events through
+            app.stage.addChild(templateSprite);
+            console.log('Template sprite added to stage');
+        };
+        templateImg.onerror = (error) => {
+            console.error('❌ Failed to load template:', error);
+        };
+        templateImg.src = 'template/template.png';
         
         // Setup interaction
         setupInteraction();
@@ -105,12 +190,18 @@ function setupInteraction() {
 
 function onMouseDown(e) {
     if (!app || !app.canvas) return;
-    isDrawing = true;
     const rect = app.canvas.getBoundingClientRect();
     const scaleX = app.renderer.width / rect.width;
     const scaleY = app.renderer.height / rect.height;
-    startX = (e.clientX - rect.left) * scaleX;
-    startY = (e.clientY - rect.top) * scaleY;
+    const x = (e.clientX - rect.left) * scaleX;
+    const y = (e.clientY - rect.top) * scaleY;
+    
+    // Only start drawing if within the allowed area
+    if (!isInDrawArea(x, y)) return;
+    
+    isDrawing = true;
+    startX = x;
+    startY = y;
     
     graphics = new PIXI.Graphics();
     drawingContainer.addChild(graphics);
@@ -124,10 +215,14 @@ function onMouseMove(e) {
     const rect = app.canvas.getBoundingClientRect();
     const scaleX = app.renderer.width / rect.width;
     const scaleY = app.renderer.height / rect.height;
-    const currentX = (e.clientX - rect.left) * scaleX;
-    const currentY = (e.clientY - rect.top) * scaleY;
+    let currentX = (e.clientX - rect.left) * scaleX;
+    let currentY = (e.clientY - rect.top) * scaleY;
     
-    // Always draw freely
+    // Clamp coordinates to drawing area
+    const clamped = clampToDrawArea(currentX, currentY);
+    currentX = clamped.x;
+    currentY = clamped.y;
+    
     graphics.lineTo(currentX, currentY);
     graphics.stroke(); // Force the line to be drawn
 }
@@ -138,6 +233,7 @@ function onMouseUp(e) {
     if (graphics) {
         graphics.stroke(); // Finalize the stroke
         drawingHistory.push(graphics);
+        currentStroke = null;
     }
     
     isDrawing = false;
@@ -151,14 +247,20 @@ function onTouchStart(e) {
         return;
     }
     const touch = e.touches[0];
-    isDrawing = true;
     const rect = app.canvas.getBoundingClientRect();
     console.log('Canvas rect:', rect);
     console.log('Renderer size:', app.renderer.width, app.renderer.height);
     const scaleX = app.renderer.width / rect.width;
     const scaleY = app.renderer.height / rect.height;
-    startX = (touch.clientX - rect.left) * scaleX;
-    startY = (touch.clientY - rect.top) * scaleY;
+    const x = (touch.clientX - rect.left) * scaleX;
+    const y = (touch.clientY - rect.top) * scaleY;
+    
+    // Only start drawing if within the allowed area
+    if (!isInDrawArea(x, y)) return;
+    
+    isDrawing = true;
+    startX = x;
+    startY = y;
     console.log('Touch position (scaled):', startX, startY);
     console.log('Touch position (raw):', touch.clientX, touch.clientY);
     
@@ -182,8 +284,13 @@ function onTouchMove(e) {
     const rect = app.canvas.getBoundingClientRect();
     const scaleX = app.renderer.width / rect.width;
     const scaleY = app.renderer.height / rect.height;
-    const currentX = (touch.clientX - rect.left) * scaleX;
-    const currentY = (touch.clientY - rect.top) * scaleY;
+    let currentX = (touch.clientX - rect.left) * scaleX;
+    let currentY = (touch.clientY - rect.top) * scaleY;
+    
+    // Clamp coordinates to drawing area
+    const clamped = clampToDrawArea(currentX, currentY);
+    currentX = clamped.x;
+    currentY = clamped.y;
     
     graphics.lineTo(currentX, currentY);
     graphics.stroke(); // Force the line to be drawn
@@ -209,6 +316,13 @@ function setColor(color, event) {
     });
     if (event && event.target) {
         event.target.classList.add('active');
+    }
+}
+
+function undoLastStroke() {
+    if (drawingHistory.length > 0) {
+        const lastStroke = drawingHistory.pop();
+        drawingContainer.removeChild(lastStroke);
     }
 }
 
@@ -249,9 +363,21 @@ async function processImage() {
     
     document.getElementById('loadingOverlay').style.display = 'flex';
     
+    // Temporarily hide the template overlay before rendering
+    const templateWasVisible = templateOverlay && templateOverlay.visible;
+    if (templateOverlay) {
+        templateOverlay.visible = false;
+    }
+    
     // Render the canvas to a data URL
     const renderer = app.renderer;
     const canvas = renderer.extract.canvas(app.stage);
+    
+    // Restore template overlay visibility
+    if (templateOverlay && templateWasVisible) {
+        templateOverlay.visible = true;
+    }
+    
     canvas.toBlob(async (blob) => {
         // Create form data
         const formData = new FormData();
