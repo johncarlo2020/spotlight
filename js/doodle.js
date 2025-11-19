@@ -13,6 +13,8 @@ let uploadedImage = null;
 let tempGraphics = null;
 let originalImageData = null;
 let customerName = '';
+let instructionText = null;
+let hasDrawn = false;
 
 // Drawing area bounds (red box region)
 const DRAW_AREA = {
@@ -219,6 +221,79 @@ async function initPixi(imageData) {
         border.stroke();
         app.stage.addChild(border);
         
+        // Add floating instruction text at the top of the draw area
+        instructionText = new PIXI.Text({
+            text: '✏️ Draw Here',
+            style: {
+                fontFamily: 'Arial',
+                fontSize: 36,
+                fontWeight: 'normal',
+                fill: 0xffffff,
+                align: 'center',
+            }
+        });
+        instructionText.anchor.set(0.5);
+        instructionText.x = DRAW_AREA.x + DRAW_AREA.width / 2;
+        instructionText.y = DRAW_AREA.y + 80; // Position near top of draw area
+        instructionText.alpha = 0.8;
+        app.stage.addChild(instructionText);
+        
+        // Add animated drawing line below the text
+        const animatedLine = new PIXI.Graphics();
+        app.stage.addChild(animatedLine);
+        
+        // Animate the instruction text (floating and blinking)
+        let floatDirection = 1;
+        let blinkTime = 0;
+        let lineProgress = 0;
+        let lineDirection = 1;
+        
+        app.ticker.add((delta) => {
+            if (instructionText && !hasDrawn) {
+                // Floating animation
+                instructionText.y += floatDirection * 0.2 * delta.deltaTime;
+                if (instructionText.y > DRAW_AREA.y + 90) {
+                    floatDirection = -1;
+                } else if (instructionText.y < DRAW_AREA.y + 70) {
+                    floatDirection = 1;
+                }
+                
+                // Blinking animation
+                blinkTime += delta.deltaTime;
+                instructionText.alpha = 0.4 + Math.abs(Math.sin(blinkTime * 0.05)) * 0.4;
+                
+                // Animated drawing line
+                lineProgress += lineDirection * 2 * delta.deltaTime;
+                if (lineProgress > 100) {
+                    lineDirection = -1;
+                } else if (lineProgress < 0) {
+                    lineDirection = 1;
+                }
+                
+                // Draw wavy line animation
+                animatedLine.clear();
+                animatedLine.setStrokeStyle({
+                    width: 3,
+                    color: 0xffffff,
+                    alpha: 0.4 + Math.abs(Math.sin(blinkTime * 0.05)) * 0.4
+                });
+                
+                const lineY = DRAW_AREA.y + 120;
+                const lineStartX = DRAW_AREA.x + DRAW_AREA.width / 2 - 60;
+                const lineEndX = lineStartX + (lineProgress * 1.2);
+                
+                animatedLine.moveTo(lineStartX, lineY);
+                for (let i = 0; i < lineProgress; i += 5) {
+                    const x = lineStartX + (i * 1.2);
+                    const y = lineY + Math.sin(i * 0.2 + blinkTime * 0.1) * 5;
+                    animatedLine.lineTo(x, y);
+                }
+                animatedLine.stroke();
+            } else if (animatedLine && hasDrawn) {
+                animatedLine.visible = false;
+            }
+        });
+        
         // Load and overlay template on top with reduced opacity
         const templateImg = new Image();
         templateImg.onload = () => {
@@ -277,6 +352,12 @@ function onMouseDown(e) {
     drawingContainer.addChild(graphics);
     graphics.lineStyle(brushSize, currentColor, 1);
     graphics.moveTo(startX, startY);
+    
+    // Hide instruction text on first draw
+    if (!hasDrawn && instructionText) {
+        hasDrawn = true;
+        instructionText.visible = false;
+    }
 }
 
 function onMouseMove(e) {
@@ -341,6 +422,12 @@ function onTouchStart(e) {
     graphics.lineTo(startX + 1, startY + 1); // Force a small line to make it visible
     console.log('Graphics added to container, children count:', drawingContainer.children.length);
     console.log('Drawing started with color:', currentColor, 'brush size:', brushSize);
+    
+    // Hide instruction text on first draw
+    if (!hasDrawn && instructionText) {
+        hasDrawn = true;
+        instructionText.visible = false;
+    }
 }
 
 function onTouchMove(e) {
