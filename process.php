@@ -108,7 +108,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['image']) && isset($_
     $startX = ($width - $nameWidth) / 2;
     $textY = $height - ($height * 0.08) - 40; // Position 8% from bottom
     
-    // Add customer name text (no shadow)
+    // Add shadow for customer name
+    $shadowColor = imagecolorallocatealpha($userImg, 0, 0, 0, 50); // Black with 50% transparency
+    $shadowOffset = 3; // Shadow offset in pixels
+    
+    // Draw shadow (slightly offset)
+    imagettftext($userImg, $nameFontSize, 0, $startX + $shadowOffset, $textY + $shadowOffset, $shadowColor, $fontPath, $customerText);
+    
+    // Add customer name text on top
     imagettftext($userImg, $nameFontSize, 0, $startX, $textY, $textColor, $fontPath, $customerText);
 
     // Save final image to output folder
