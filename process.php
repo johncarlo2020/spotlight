@@ -73,6 +73,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['image']) && isset($_
     
     // Create final image with correct dimensions
     $userImg = imagecreatetruecolor($targetWidth, $targetHeight);
+    
+    // Set resolution to 300 DPI
+    if (function_exists('imageresolution')) {
+        imageresolution($userImg, 300, 300);
+    }
+    
     imagecopy($userImg, $resizedImg, 0, 0, $cropX, $cropY, $targetWidth, $targetHeight);
     
     // Clean up temporary images

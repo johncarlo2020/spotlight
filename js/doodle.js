@@ -18,6 +18,7 @@ let hasDrawn = false;
 let templateSprite = null;
 let animatedLine = null;
 let borderGraphics = null;
+let drawingMask = null;
 
 // Drawing area bounds (red box region)
 const DRAW_AREA = {
@@ -119,6 +120,7 @@ async function initPixi(imageData) {
         drawingContainer.mask = mask;
         app.stage.addChild(drawingContainer);
         app.stage.addChild(mask); // Mask needs to be on stage
+        drawingMask = mask; // Store reference
         
         // Add dashed border to show drawing area with rounded corners
         const border = new PIXI.Graphics();
@@ -529,11 +531,13 @@ async function processImage() {
     const borderWasVisible = borderGraphics && borderGraphics.visible;
     const textWasVisible = instructionText && instructionText.visible;
     const lineWasVisible = animatedLine && animatedLine.visible;
+    const maskWasVisible = drawingMask && drawingMask.visible;
     
     if (templateSprite) templateSprite.visible = false;
     if (borderGraphics) borderGraphics.visible = false;
     if (instructionText) instructionText.visible = false;
     if (animatedLine) animatedLine.visible = false;
+    if (drawingMask) drawingMask.visible = false;
     
     // Render the canvas to a data URL
     const renderer = app.renderer;
@@ -544,6 +548,7 @@ async function processImage() {
     if (borderGraphics && borderWasVisible) borderGraphics.visible = true;
     if (instructionText && textWasVisible) instructionText.visible = true;
     if (animatedLine && lineWasVisible) animatedLine.visible = true;
+    if (drawingMask && maskWasVisible) drawingMask.visible = true;
     
     canvas.toBlob(async (blob) => {
         // Create form data
