@@ -149,6 +149,8 @@ h1 {
 /* Action Buttons Inside Control Panel */
 .button-group {
     display: flex;
+    flex-direction: row;
+    align-items: center;
     gap: 8px;
     padding-left: 15px;
     border-left: 1px solid rgba(255, 255, 255, 0.2);
@@ -156,6 +158,11 @@ h1 {
 
 .button-group .action-btn {
     gap: 6px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
 .button-group .action-btn i {
@@ -375,5 +382,61 @@ h1 {
     .action-btn {
         padding: 6px 14px;
         font-size: 12px;
+    }
+}
+
+/* iPad Mini and Tablet (Portrait & Landscape) */
+@media (min-width: 744px) and (max-width: 1024px) {
+    .canvas-container {
+        padding: 80px 30px 120px 30px;
+    }
+    
+    #pixiCanvas canvas {
+        max-width: calc(100vw - 60px);
+        max-height: calc(100vh - 200px);
+    }
+    
+    .controls-left {
+        bottom: 30px;
+    }
+    
+    .control-panel {
+        padding: 10px 18px;
+        gap: 16px;
+        border-radius: 60px;
+    }
+    
+    .color-palette {
+        gap: 10px;
+    }
+    
+    .color-btn {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .button-group {
+        gap: 8px;
+        padding-left: 16px;
+    }
+    
+    .action-btn {
+        padding: 10px 18px;
+        font-size: 14px;
+    }
+    
+    .modal-content {
+        max-width: 500px;
+    }
+}
+
+/* iPad Mini Landscape Specific */
+@media (min-width: 1024px) and (max-width: 1366px) and (orientation: landscape) {
+    .canvas-container {
+        padding: 70px 40px 100px 40px;
+    }
+    
+    #pixiCanvas canvas {
+        max-height: calc(100vh - 170px);
     }
 }
