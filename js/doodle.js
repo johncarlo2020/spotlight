@@ -526,29 +526,31 @@ async function processImage() {
     
     document.getElementById('loadingOverlay').style.display = 'flex';
     
-    // Temporarily hide UI elements before rendering
+    // Temporarily hide UI elements and remove mask before rendering
     const templateWasVisible = templateSprite && templateSprite.visible;
     const borderWasVisible = borderGraphics && borderGraphics.visible;
     const textWasVisible = instructionText && instructionText.visible;
     const lineWasVisible = animatedLine && animatedLine.visible;
-    const maskWasVisible = drawingMask && drawingMask.visible;
+    const originalMask = drawingContainer.mask;
     
     if (templateSprite) templateSprite.visible = false;
     if (borderGraphics) borderGraphics.visible = false;
     if (instructionText) instructionText.visible = false;
     if (animatedLine) animatedLine.visible = false;
+    drawingContainer.mask = null; // Remove mask to allow doodles to render
     if (drawingMask) drawingMask.visible = false;
     
     // Render the canvas to a data URL
     const renderer = app.renderer;
     const canvas = renderer.extract.canvas(app.stage);
     
-    // Restore UI elements visibility
+    // Restore UI elements visibility and mask
     if (templateSprite && templateWasVisible) templateSprite.visible = true;
     if (borderGraphics && borderWasVisible) borderGraphics.visible = true;
     if (instructionText && textWasVisible) instructionText.visible = true;
     if (animatedLine && lineWasVisible) animatedLine.visible = true;
-    if (drawingMask && maskWasVisible) drawingMask.visible = true;
+    drawingContainer.mask = originalMask; // Restore mask
+    if (drawingMask) drawingMask.visible = true;
     
     canvas.toBlob(async (blob) => {
         // Create form data
