@@ -35,14 +35,6 @@ $totalImages = count($images);
 $totalPages = ceil($totalImages / $itemsPerPage);
 $offset = ($currentPage - 1) * $itemsPerPage;
 $currentImages = array_slice($images, $offset, $itemsPerPage);
-
-function getCustomerNameFromFilename($filename) {
-    // Try to extract customer name from filename pattern
-    if (preg_match('/output_\d+_\d+\.png/', $filename)) {
-        return 'Customer'; // Default if no name found
-    }
-    return 'Customer';
-}
 ?>
 
 <!DOCTYPE html>
@@ -562,7 +554,7 @@ function getCustomerNameFromFilename($filename) {
             addNewImageToGallery(data);
             
             // Show notification
-            showNewImageNotification(data.customer_name);
+            showNewImageNotification();
         });
 
         function addNewImageToGallery(imageData) {
@@ -600,8 +592,8 @@ function getCustomerNameFromFilename($filename) {
             }
         }
 
-        function showNewImageNotification(customerName) {
-            createToaster('success', '🖼️ New Image Added!', `New spotlight image created for ${customerName}`, 5000);
+        function showNewImageNotification() {
+            createToaster('success', '🖼️ New Image Added!', 'New spotlight image has been created', 5000);
         }
 
         // Advanced Toaster System

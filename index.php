@@ -215,12 +215,8 @@
         </div>
     <?php
     $outputImg = isset($_GET['output']) ? $_GET['output'] : '';
-    $customerName = isset($_GET['name']) ? htmlspecialchars($_GET['name']) : '';
     ?>
         <form action="process.php" method="post" enctype="multipart/form-data">
-            <label for="customer_name">Name:</label>
-            <input type="text" id="customer_name" name="customer_name" required value="<?php echo $customerName; ?>">
-            
             <label for="image">Select image to upload:</label>
             <input type="file" name="image" id="image" accept="image/*" required>
             
@@ -231,10 +227,9 @@
             <div class="result">
                 <h3>Processed Image:</h3>
                 <img id="processedImage" src="output/<?php echo htmlspecialchars($outputImg); ?>" alt="Processed Image">
-                <p><strong>Customer:</strong> <?php echo htmlspecialchars($customerName); ?></p>
                 <div class="button-group">
                     <button class="print-btn" onclick="printImage()">🖨️ Print Image</button>
-                    <button class="share-btn" onclick="shareImage('<?php echo htmlspecialchars($outputImg); ?>', '<?php echo htmlspecialchars($customerName); ?>')">📱 Share Image</button>
+                    <button class="share-btn" onclick="shareImage('<?php echo htmlspecialchars($outputImg); ?>')">📱 Share Image</button>
                 </div>
             </div>
         <?php endif; ?>
@@ -250,8 +245,8 @@
             printWindow.document.close();
         }
         
-        function shareImage(filename, customerName) {
-            window.open('share.php?img=' + encodeURIComponent(filename) + '&name=' + encodeURIComponent(customerName), '_blank');
+        function shareImage(filename) {
+            window.open('share.php?img=' + encodeURIComponent(filename), '_blank');
         }
     </script>
 </body>

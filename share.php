@@ -2,7 +2,6 @@
 // share.php: Generates QR code for sharing the image
 
 $imageFile = isset($_GET['img']) ? $_GET['img'] : '';
-$customerName = isset($_GET['name']) ? $_GET['name'] : '';
 
 if (!$imageFile || !file_exists('output/' . $imageFile)) {
     die('Image not found.');
@@ -12,7 +11,7 @@ if (!$imageFile || !file_exists('output/' . $imageFile)) {
 $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
 $host = $_SERVER['HTTP_HOST'];
 $path = dirname($_SERVER['REQUEST_URI']);
-$shareUrl = $protocol . '://' . $host . $path . '/view.php?img=' . urlencode($imageFile) . '&name=' . urlencode($customerName);
+$shareUrl = $protocol . '://' . $host . $path . '/view.php?img=' . urlencode($imageFile);
 
 // Generate QR code using Google Charts API (simple solution)
 $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' . urlencode($shareUrl);
