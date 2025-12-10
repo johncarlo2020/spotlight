@@ -28,19 +28,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['image'])) {
     $templateWidth = imagesx($templateImg);
     $templateHeight = imagesy($templateImg);
     
-    // Load uploaded image
-    switch ($uploadedType) {
-        case 'image/jpeg':
-            $userImg = imagecreatefromjpeg($uploadedFile);
-            break;
-        case 'image/png':
-            $userImg = imagecreatefrompng($uploadedFile);
-            break;
-        case 'image/gif':
-            $userImg = imagecreatefromgif($uploadedFile);
-            break;
-        default:
-            die('Unsupported image type.');
+    // Load uploaded image - accept any image format
+    $userImg = @imagecreatefromstring(file_get_contents($uploadedFile));
+    
+    if (!$userImg) {
+        die('Failed to load uploaded image. Please ensure the file is a valid image format.');
     }
     
     // Create final canvas with template dimensions
