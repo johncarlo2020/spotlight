@@ -35,6 +35,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['image'])) {
         die('Failed to load uploaded image. Please ensure the file is a valid image format.');
     }
     
+    $uploadedWidth = imagesx($userImg);
+    $uploadedHeight = imagesy($userImg);
+    
+    // Crop uploaded image to square (center crop) to prevent stretching
+    $squareSize = min($uploadedWidth, $uploadedHeight);
+    $cropX = ($uploadedWidth - $squareSize) / 2;
+    $cropY = ($uploadedHeight - $squareSize) / 2;
+    
+    $squareImg = imagecreatetruecolor($squareSize, $squareSize);
+    imagecopy($squareImg, $userImg, 0, 0, $cropX, $cropY, $squareSize, $squareSize);
+    imagedestroy($userImg);
+    
     // Create final canvas with template dimensions
     $finalImg = imagecreatetruecolor($templateWidth, $templateHeight);
     imagealphablending($finalImg, true);
@@ -55,23 +67,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['image'])) {
     $rightBoxX = 945;
     $boxY = 66;
     
-    // Resize and place user image in LEFT transparent area
-    $resizedLeft = imagecreatetruecolor($boxWidth, $boxHeight);
-    imagecopyresampled($resizedLeft, $userImg, 0, 0, 0, 0, $boxWidth, $boxHeight, imagesx($userImg), imagesy($userImg));
-    imagecopy($finalImg, $resizedLeft, $leftBoxX, $boxY, 0, 0, $boxWidth, $boxHeight);
+    // Resize square image to fit box dimensions (810x810) - no stretching!
+    $resizedSquare = imagecreatetruecolor($boxWidth, $boxHeight);
+    imagecopyresampled($resizedSquare, $squareImg, 0, 0, 0, 0, $boxWidth, $boxHeight, $squareSize, $squareSize);
+    imagedestroy($squareImg);
     
-    // Resize and place user image in RIGHT transparent area
-    $resizedRight = imagecreatetruecolor($boxWidth, $boxHeight);
-    imagecopyresampled($resizedRight, $userImg, 0, 0, 0, 0, $boxWidth, $boxHeight, imagesx($userImg), imagesy($userImg));
-    imagecopy($finalImg, $resizedRight, $rightBoxX, $boxY, 0, 0, $boxWidth, $boxHeight);
+    // Place resized square image in LEFT transparent area
+    imagecopy($finalImg, $resizedSquare, $leftBoxX, $boxY, 0, 0, $boxWidth, $boxHeight);
+    
+    // Place resized square image in RIGHT transparent area
+    imagecopy($finalImg, $resizedSquare, $rightBoxX, $boxY, 0, 0, $boxWidth, $boxHeight);
+    
+    // Clean up resized image
+    imagedestroy($resizedSquare);
     
     // Overlay template on top to show the design elements
     imagecopy($finalImg, $templateImg, 0, 0, 0, 0, $templateWidth, $templateHeight);
     
-    // Clean up temporary images
-    imagedestroy($userImg);
-    imagedestroy($resizedLeft);
-    imagedestroy($resizedRight);
+    // Clean up template
     imagedestroy($templateImg);
 
     // Save final image to output folder (no text overlay needed)

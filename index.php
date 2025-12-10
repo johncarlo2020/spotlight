@@ -199,6 +199,79 @@
                 margin: 5px 0;
             }
         }
+        
+        /* QR Modal */
+        .qr-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .qr-modal.active {
+            display: flex;
+        }
+        
+        .qr-modal-content {
+            background: #fff;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 90%;
+            position: relative;
+            animation: modalSlideIn 0.3s ease-out;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .qr-modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #f44336;
+            color: #fff;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+        
+        .qr-modal-close:hover {
+            background: #d32f2f;
+        }
+        
+        .qr-modal h3 {
+            color: #000;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .qr-modal p {
+            color: #666;
+            margin-top: 15px;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
@@ -211,7 +284,13 @@
         <p class="subtitle">Create stunning spotlight images with custom overlays</p>
         
         <div style="text-align: center; margin-bottom: 30px;">
-            <a href="gallery.php" style="background: #666; color: #fff; padding: 10px 20px; border-radius: 25px; text-decoration: none; font-weight: 600; transition: all 0.3s ease;" onmouseover="this.style.background='#555'; this.style.color='#fff';" onmouseout="this.style.background='#666'; this.style.color='#fff';">📸 View Gallery</a>
+            <button onclick="showQRModal()" style="background: #4CAF50; color: #fff; padding: 15px 40px; border: none; border-radius: 25px; font-weight: 600; font-size: 18px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);" onmouseover="this.style.background='#45a049'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(76, 175, 80, 0.4)';" onmouseout="this.style.background='#4CAF50'; this.style.transform='translateY(0)'; this.style.boxShadow='0 5px 15px rgba(76, 175, 80, 0.3)';">
+                📱 Take Photo - Scan QR Code
+            </button>
+        </div>
+        
+        <div style="text-align: center; margin-bottom: 30px;">
+            <a href="gallery.php" style="background: #666; color: #fff; padding: 15px 30px; border-radius: 25px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; font-size: 16px; display: inline-block;" onmouseover="this.style.background='#555'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='#666'; this.style.transform='translateY(0)';">📸 View Gallery</a>
         </div>
     <?php
     $outputImg = isset($_GET['output']) ? $_GET['output'] : '';
@@ -248,6 +327,38 @@
         function shareImage(filename) {
             window.open('share.php?img=' + encodeURIComponent(filename), '_blank');
         }
+        
+        function showQRModal() {
+            document.getElementById('qrModal').classList.add('active');
+        }
+        
+        function closeQRModal() {
+            document.getElementById('qrModal').classList.remove('active');
+        }
+        
+        // Close modal when clicking outside
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('qrModal');
+            if (e.target === modal) {
+                closeQRModal();
+            }
+        });
     </script>
+    
+    <!-- QR Code Modal -->
+    <div id="qrModal" class="qr-modal">
+        <div class="qr-modal-content">
+            <button class="qr-modal-close" onclick="closeQRModal()">×</button>
+            <h3>📱 Scan to Take Photo</h3>
+            <?php
+            $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+            $host = $_SERVER['HTTP_HOST'];
+            $cameraUrl = $protocol . '://' . $host . dirname($_SERVER['REQUEST_URI']) . '/camera.php';
+            $qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' . urlencode($cameraUrl);
+            ?>
+            <img src="<?php echo $qrCodeUrl; ?>" alt="Scan QR Code" style="display: block; margin: 20px auto;">
+            <p>Open your phone camera and scan this QR code<br>to start taking photos</p>
+        </div>
+    </div>
 </body>
 </html>
