@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Spotlight Camera</title>
     <style>
         * {
@@ -17,9 +17,10 @@
             background: #000;
             color: #fff;
             overflow: hidden;
-            position: fixed;
             width: 100%;
             height: 100vh;
+            margin: 0;
+            padding: 0;
         }
         
         /* Camera View */
@@ -29,26 +30,36 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
+            background: #000;
+        }
+        
+        .camera-video-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+            overflow: hidden;
         }
         
         #video {
             width: 100%;
-            height: 100%;
+            aspect-ratio: 1 / 1;
             object-fit: cover;
             background: #000;
+            max-height: calc(100vh - 150px);
         }
         
         .camera-controls {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
             padding: 20px;
-            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            padding-bottom: max(60px, env(safe-area-inset-bottom));
+            background: #000;
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 30px;
+            min-height: 120px;
+            flex-shrink: 0;
         }
         
         .capture-btn {
@@ -83,54 +94,67 @@
         /* Editor View */
         #editorView {
             display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100vh;
             flex-direction: column;
             background: #000;
+            overflow: hidden;
         }
         
         .editor-canvas-container {
-            flex: 1;
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
+            overflow: visible;
             touch-action: none;
+            background: #000;
+            flex: 1;
+            max-height: calc(100vh - 250px);
         }
         
         #editorCanvas {
+            width: 100%;
+            aspect-ratio: 1 / 1;
             max-width: 100%;
             max-height: 100%;
             display: block;
             touch-action: none;
+            object-fit: contain;
         }
         
         .editor-toolbar {
             background: #1a1a1a;
-            padding: 15px;
+            padding: 8px 10px;
             display: flex;
-            gap: 10px;
+            gap: 8px;
             overflow-x: auto;
+            overflow-y: hidden;
             -webkit-overflow-scrolling: touch;
+            flex-shrink: 0;
+            height: 80px;
         }
         
         .toolbar-btn {
-            min-width: 60px;
-            height: 60px;
-            border-radius: 12px;
+            min-width: 55px;
+            height: 55px;
+            border-radius: 10px;
             background: #2a2a2a;
             border: 2px solid #3a3a3a;
             color: #fff;
-            font-size: 24px;
+            font-size: 22px;
             cursor: pointer;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             gap: 2px;
-            padding: 5px;
+            padding: 4px;
             transition: all 0.2s;
+            flex-shrink: 0;
         }
         
         .toolbar-btn span {
@@ -152,10 +176,13 @@
         .sticker-panel {
             display: none;
             background: #2a2a2a;
-            padding: 15px;
+            padding: 8px 10px;
             overflow-x: auto;
+            overflow-y: hidden;
             white-space: nowrap;
             -webkit-overflow-scrolling: touch;
+            flex-shrink: 0;
+            height: 80px;
         }
         
         .sticker-panel.active {
@@ -164,14 +191,14 @@
         
         .sticker-item {
             display: inline-block;
-            width: 60px;
-            height: 60px;
-            margin: 5px;
-            font-size: 40px;
+            width: 55px;
+            height: 55px;
+            margin: 3px;
+            font-size: 35px;
             cursor: pointer;
             text-align: center;
-            line-height: 60px;
-            border-radius: 10px;
+            line-height: 55px;
+            border-radius: 8px;
             background: #3a3a3a;
             transition: transform 0.2s;
         }
@@ -224,16 +251,19 @@
         .action-buttons {
             display: flex;
             gap: 10px;
-            padding: 15px;
+            padding: 12px 15px;
+            padding-bottom: 15px;
             background: #1a1a1a;
+            flex-shrink: 0;
+            height: 65px;
         }
         
         .action-btn {
             flex: 1;
-            padding: 15px;
+            padding: 12px;
             border: none;
             border-radius: 10px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
@@ -250,6 +280,80 @@
         }
         
         .action-btn:active {
+            transform: scale(0.97);
+        }
+        
+        /* Success View */
+        #successView {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: #000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 9998;
+        }
+        
+        .success-content {
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        .success-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+        
+        .success-message {
+            font-size: 16px;
+            color: #ccc;
+            margin-bottom: 30px;
+        }
+        
+        .success-preview {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 15px;
+            margin: 0 auto 30px;
+            box-shadow: 0 8px 30px rgba(76, 175, 80, 0.3);
+        }
+        
+        .success-buttons {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+        }
+        
+        .success-btn {
+            flex: 1;
+            padding: 18px;
+            border: none;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-new-photo {
+            background: #4CAF50;
+            color: #fff;
+        }
+        
+        .btn-view-gallery {
+            background: #2196F3;
+            color: #fff;
+        }
+        
+        .success-btn:active {
             transform: scale(0.97);
         }
         
@@ -316,20 +420,42 @@
             font-size: 60px;
             z-index: 100;
             transition: transform 0.1s;
+            padding: 10px;
         }
         
         .placed-sticker.selected {
             transform: scale(1.1);
-            filter: drop-shadow(0 0 10px rgba(76, 175, 80, 0.8));
+            border: 3px solid #4CAF50;
+            border-radius: 8px;
+            background: rgba(76, 175, 80, 0.1);
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
+        }
+        
+        .placed-sticker.selected::after {
+            content: '⇲';
+            position: absolute;
+            bottom: -5px;
+            right: -5px;
+            width: 25px;
+            height: 25px;
+            background: #4CAF50;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
         
         .sticker-controls {
             position: absolute;
-            top: -40px;
-            right: -40px;
+            top: -45px;
+            right: -10px;
             display: none;
             gap: 5px;
-            flex-direction: column;
+            flex-direction: row;
         }
         
         .placed-sticker.selected .sticker-controls {
@@ -340,16 +466,30 @@
             width: 35px;
             height: 35px;
             border-radius: 50%;
-            background: #f44336;
             border: 2px solid #fff;
             color: #fff;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            pointer-events: auto;
+            touch-action: auto;
+            z-index: 1000;
+        }
+        
+        .sticker-btn-delete {
+            background: #f44336;
+        }
+        
+        .sticker-btn-increase {
+            background: #4CAF50;
+        }
+        
+        .sticker-btn-decrease {
+            background: #FF9800;
         }
         
         .sticker-control-btn:active {
@@ -363,7 +503,9 @@
         <div class="header">
             <img src="logo.png" alt="Spotlight" class="logo-small">
         </div>
-        <video id="video" autoplay playsinline></video>
+        <div class="camera-video-container">
+            <video id="video" autoplay playsinline></video>
+        </div>
         <div class="camera-controls">
             <button class="switch-camera-btn" id="switchCamera">🔄</button>
             <button class="capture-btn" id="captureBtn"></button>
@@ -450,6 +592,19 @@
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
         <div class="loading-text">Processing your photo...</div>
+    </div>
+    
+    <!-- Success View -->
+    <div id="successView">
+        <div class="success-content">
+            <div class="success-title">✓ Photo Saved!</div>
+            <div class="success-message">Your photo has been processed successfully</div>
+            <img id="successPreview" class="success-preview" alt="Processed photo">
+            <div class="success-buttons">
+                <button class="success-btn btn-new-photo" id="newPhotoBtn">📷 New Photo</button>
+                <button class="success-btn btn-view-gallery" id="viewGalleryBtn">🖼️ View Gallery</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -570,9 +725,10 @@
             canvas = editorCanvas;
             ctx = canvas.getContext('2d');
             
-            // Set canvas size to match image
-            canvas.width = capturedImage.width;
-            canvas.height = capturedImage.height;
+            // Set canvas to square (1:1 ratio) using the smaller dimension
+            const size = Math.min(capturedImage.width, capturedImage.height);
+            canvas.width = size;
+            canvas.height = size;
             
             drawCanvas();
             
@@ -586,9 +742,18 @@
         function drawCanvas() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Apply filter
+            // Calculate crop for center square
+            const size = Math.min(capturedImage.width, capturedImage.height);
+            const sourceX = (capturedImage.width - size) / 2;
+            const sourceY = (capturedImage.height - size) / 2;
+            
+            // Apply filter and draw cropped square image
             ctx.filter = getFilterStyle(currentFilter);
-            ctx.drawImage(capturedImage, 0, 0, canvas.width, canvas.height);
+            ctx.drawImage(
+                capturedImage,
+                sourceX, sourceY, size, size,  // Source: center square crop
+                0, 0, canvas.width, canvas.height  // Destination: full canvas
+            );
             ctx.filter = 'none';
         }
         
@@ -643,15 +808,29 @@
             // Add controls
             const controls = document.createElement('div');
             controls.className = 'sticker-controls';
-            controls.innerHTML = `
-                <button class="sticker-control-btn" onclick="deleteSticker(${placedStickers.length})">×</button>
-            `;
+            
+            const decreaseBtn = document.createElement('button');
+            decreaseBtn.className = 'sticker-control-btn sticker-btn-decrease';
+            decreaseBtn.textContent = '−';
+            
+            const increaseBtn = document.createElement('button');
+            increaseBtn.className = 'sticker-control-btn sticker-btn-increase';
+            increaseBtn.textContent = '+';
+            
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'sticker-control-btn sticker-btn-delete';
+            deleteBtn.textContent = '×';
+            
+            controls.appendChild(decreaseBtn);
+            controls.appendChild(increaseBtn);
+            controls.appendChild(deleteBtn);
             stickerElement.appendChild(controls);
             
             // Add to container
             canvasContainer.appendChild(stickerElement);
             
             // Store sticker data
+            const stickerIndex = placedStickers.length;
             placedStickers.push({
                 element: stickerElement,
                 emoji: emoji,
@@ -660,11 +839,54 @@
                 y: parseFloat(stickerElement.style.top)
             });
             
+            // Add button event listeners
+            decreaseBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                resizeSticker(stickerIndex, -10);
+            });
+            decreaseBtn.addEventListener('touchstart', (e) => {
+                e.stopPropagation();
+            });
+            decreaseBtn.addEventListener('touchend', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                resizeSticker(stickerIndex, -10);
+            });
+            
+            increaseBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                resizeSticker(stickerIndex, 10);
+            });
+            increaseBtn.addEventListener('touchstart', (e) => {
+                e.stopPropagation();
+            });
+            increaseBtn.addEventListener('touchend', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                resizeSticker(stickerIndex, 10);
+            });
+            
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                deleteSticker(stickerIndex);
+            });
+            deleteBtn.addEventListener('touchstart', (e) => {
+                e.stopPropagation();
+            });
+            deleteBtn.addEventListener('touchend', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                deleteSticker(stickerIndex);
+            });
+            
             // Make draggable
-            makeStickerDraggable(stickerElement, placedStickers.length - 1);
+            makeStickerDraggable(stickerElement, stickerIndex);
             
             // Select it
-            selectSticker(placedStickers.length - 1);
+            selectSticker(stickerIndex);
         }
         
         // Make sticker draggable
@@ -672,22 +894,14 @@
             let isDragging = false;
             let startX, startY, initialX, initialY;
             
-            // Pinch-to-zoom variables
-            let initialDistance = 0;
-            let currentScale = 1;
-            
             const onStart = (e) => {
-                // Handle pinch zoom
-                if (e.touches && e.touches.length === 2) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const touch1 = e.touches[0];
-                    const touch2 = e.touches[1];
-                    initialDistance = Math.hypot(
-                        touch2.clientX - touch1.clientX,
-                        touch2.clientY - touch1.clientY
-                    );
-                    selectSticker(index);
+                // Don't drag if clicking on a button
+                if (e.target.classList.contains('sticker-control-btn')) {
+                    return;
+                }
+                
+                // Only handle single touch or mouse
+                if (e.touches && e.touches.length > 1) {
                     return;
                 }
                 
@@ -710,25 +924,6 @@
             };
             
             const onMove = (e) => {
-                // Handle pinch zoom
-                if (e.touches && e.touches.length === 2) {
-                    e.preventDefault();
-                    const touch1 = e.touches[0];
-                    const touch2 = e.touches[1];
-                    const currentDistance = Math.hypot(
-                        touch2.clientX - touch1.clientX,
-                        touch2.clientY - touch1.clientY
-                    );
-                    
-                    if (initialDistance > 0) {
-                        const scale = currentDistance / initialDistance;
-                        const newSize = Math.max(20, Math.min(200, placedStickers[index].size * scale));
-                        placedStickers[index].size = newSize;
-                        element.style.fontSize = newSize + 'px';
-                    }
-                    return;
-                }
-                
                 // Handle drag
                 if (!isDragging) return;
                 e.preventDefault();
@@ -751,14 +946,6 @@
             
             const onEnd = (e) => {
                 isDragging = false;
-                initialDistance = 0;
-                
-                // Update scale after pinch
-                if (e.changedTouches && e.changedTouches.length > 0) {
-                    // Store the final size
-                    const currentSize = parseFloat(element.style.fontSize);
-                    placedStickers[index].size = currentSize;
-                }
             };
             
             element.addEventListener('mousedown', onStart);
@@ -777,24 +964,89 @@
             selectedStickerIndex = index;
         }
         
+        // Resize sticker
+        function resizeSticker(index, delta) {
+            if (placedStickers[index]) {
+                const currentSize = placedStickers[index].size;
+                const newSize = Math.max(20, Math.min(200, currentSize + delta));
+                placedStickers[index].size = newSize;
+                placedStickers[index].element.style.fontSize = newSize + 'px';
+            }
+        }
+        
         // Delete sticker
-        window.deleteSticker = function(index) {
+        function deleteSticker(index) {
             if (placedStickers[index]) {
                 placedStickers[index].element.remove();
                 placedStickers.splice(index, 1);
                 selectedStickerIndex = -1;
                 
-                // Re-index remaining stickers
+                // Re-index remaining stickers and update buttons
                 placedStickers.forEach((sticker, i) => {
                     const controls = sticker.element.querySelector('.sticker-controls');
                     if (controls) {
-                        controls.innerHTML = `
-                            <button class="sticker-control-btn" onclick="deleteSticker(${i})">×</button>
-                        `;
+                        // Clear old buttons
+                        controls.innerHTML = '';
+                        
+                        // Create new buttons
+                        const decreaseBtn = document.createElement('button');
+                        decreaseBtn.className = 'sticker-control-btn sticker-btn-decrease';
+                        decreaseBtn.textContent = '−';
+                        decreaseBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            resizeSticker(i, -10);
+                        });
+                        decreaseBtn.addEventListener('touchstart', (e) => {
+                            e.stopPropagation();
+                        });
+                        decreaseBtn.addEventListener('touchend', (e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            resizeSticker(i, -10);
+                        });
+                        
+                        const increaseBtn = document.createElement('button');
+                        increaseBtn.className = 'sticker-control-btn sticker-btn-increase';
+                        increaseBtn.textContent = '+';
+                        increaseBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            resizeSticker(i, 10);
+                        });
+                        increaseBtn.addEventListener('touchstart', (e) => {
+                            e.stopPropagation();
+                        });
+                        increaseBtn.addEventListener('touchend', (e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            resizeSticker(i, 10);
+                        });
+                        
+                        const deleteBtn = document.createElement('button');
+                        deleteBtn.className = 'sticker-control-btn sticker-btn-delete';
+                        deleteBtn.textContent = '×';
+                        deleteBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            deleteSticker(i);
+                        });
+                        deleteBtn.addEventListener('touchstart', (e) => {
+                            e.stopPropagation();
+                        });
+                        deleteBtn.addEventListener('touchend', (e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            deleteSticker(i);
+                        });
+                        
+                        controls.appendChild(decreaseBtn);
+                        controls.appendChild(increaseBtn);
+                        controls.appendChild(deleteBtn);
                     }
                 });
             }
-        };
+        }
         
         // Apply filter
         document.querySelectorAll('.filter-item').forEach(item => {
@@ -835,7 +1087,7 @@
             
             // Create a temporary canvas to merge everything
             const finalCanvas = document.createElement('canvas');
-            const targetSize = 810; // Square size to fit template
+            const targetSize = 820; // Square size 820x820
             finalCanvas.width = targetSize;
             finalCanvas.height = targetSize;
             const finalCtx = finalCanvas.getContext('2d');
@@ -914,8 +1166,16 @@
                 });
                 
                 if (uploadResponse.ok) {
-                    // Redirect to gallery
-                    window.location.href = 'gallery.php';
+                    // Hide loading and show success view
+                    loadingOverlay.classList.remove('active');
+                    
+                    // Show preview in success view
+                    const successPreview = document.getElementById('successPreview');
+                    successPreview.src = finalImageDataURL;
+                    
+                    // Hide editor and show success
+                    editorView.style.display = 'none';
+                    document.getElementById('successView').style.display = 'flex';
                 } else {
                     throw new Error('Upload failed');
                 }
@@ -924,6 +1184,22 @@
                 alert('Error uploading photo. Please try again.');
                 loadingOverlay.classList.remove('active');
             }
+        });
+        
+        // New Photo button - refresh to camera
+        document.getElementById('newPhotoBtn').addEventListener('click', async () => {
+            document.getElementById('successView').style.display = 'none';
+            cameraView.style.display = 'flex';
+            placedStickers.forEach(sticker => sticker.element.remove());
+            placedStickers = [];
+            stickers = [];
+            currentFilter = 'none';
+            await initCamera();
+        });
+        
+        // View Gallery button
+        document.getElementById('viewGalleryBtn').addEventListener('click', () => {
+            window.location.href = 'gallery.php';
         });
         
         // Check for HTTPS or localhost
