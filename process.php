@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['image'])) {
     $rightBoxX = 945;
     $boxY = 73;
     
-    // Resize square image to fit box dimensions (810x810) - no stretching!
+    // Resize square image to fit box dimensions (820x820) - no stretching!
     $resizedSquare = imagecreatetruecolor($boxWidth, $boxHeight);
     imagecopyresampled($resizedSquare, $squareImg, 0, 0, 0, 0, $boxWidth, $boxHeight, $squareSize, $squareSize);
     imagedestroy($squareImg);
