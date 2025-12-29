@@ -296,11 +296,11 @@ function getPositionProperties(index, total, direction = -1) {
     }
     
     const positions = [
-        { scale: 0.8, alpha: 0.7, offScreenOffset: 0 },     // far-left (index 0)
-        { scale: 0.9, alpha: 0.8, offScreenOffset: 0 },     // left (index 1)
-        { scale: 1.15, alpha: 1.0, offScreenOffset: 0 },    // CENTER (biggest) - index 2
-        { scale: 0.9, alpha: 0.8, offScreenOffset: 0 },     // right (index 3)
-        { scale: 0.8, alpha: 0.7, offScreenOffset: 0 }      // far-right (index 4)
+        { scale: 0.8, alpha: 0.7, offScreenOffset: 0 },     // far-left (index 0) - reduced opacity
+        { scale: 0.9, alpha: 1.0, offScreenOffset: 0 },     // left (index 1) - full opacity
+        { scale: 1.15, alpha: 1.0, offScreenOffset: 0 },    // CENTER (biggest) - index 2 - full opacity
+        { scale: 0.9, alpha: 1.0, offScreenOffset: 0 },     // right (index 3) - full opacity
+        { scale: 0.8, alpha: 0.7, offScreenOffset: 0 }      // far-right (index 4) - reduced opacity
     ];
     
     return positions[index] || { scale: 0.8, alpha: 0.7, offScreenOffset: 0 };
@@ -317,7 +317,7 @@ function positionSprites(carouselIndex) {
         const props = getPositionProperties(index, carousel.sprites.length, direction);
         
         if (index === 5) {
-            // Buffer: position off-screen based on direction
+            // Buffer: position off-screen based on direction with lowest z-index
             if (direction === -1) {
                 // Moving left, buffer on the right
                 sprite.x = centerX + (4 - centerIndex) * (CARD_WIDTH + CARD_GAP) + props.offScreenOffset;
@@ -326,16 +326,19 @@ function positionSprites(carouselIndex) {
                 sprite.x = centerX + (0 - centerIndex) * (CARD_WIDTH + CARD_GAP) + props.offScreenOffset;
             }
             sprite.visible = false;
+            sprite.zIndex = 0; // Lowest z-index for buffer
         } else {
-            // Visible cards (0-4)
+            // Visible cards (0-4) - stack like cards in a deck
             const offsetFromCenter = (index - centerIndex) * (CARD_WIDTH + CARD_GAP);
             sprite.x = centerX + offsetFromCenter;
             sprite.visible = true;
+            
+            // Sequential z-index: card 0 at bottom, card 4 at top
+            sprite.zIndex = 100 + (index * 10);
         }
         
         sprite.scale.set(props.scale);
         sprite.alpha = props.alpha;
-        sprite.zIndex = props.scale * 1000;
     });
     
     console.log(`📍 Carousel ${carouselIndex}: ${carousel.sprites.length} sprites, center at index ${centerIndex}, buffer at index 5`);
@@ -386,7 +389,8 @@ function animateSpriteToPosition(sprite, index, carouselIndex, duration = 2) {
     let targetX;
     
     if (index === 5) {
-        // Buffer position - fade out in place, then teleport off-screen
+        // Buffer position - set lowest z-index immediately, fade out in place, then teleport
+        sprite.zIndex = 0; // Lowest z-index so it goes behind everything
         sprite.visible = true;
         
         // Fade out in current position (don't move)
@@ -414,10 +418,11 @@ function animateSpriteToPosition(sprite, index, carouselIndex, duration = 2) {
         });
         
     } else {
-        // Visible positions (0-4)
+        // Visible positions (0-4) - stack like cards in a deck
         targetX = centerX + (index - centerIndex) * (CARD_WIDTH + CARD_GAP);
         
-        sprite.zIndex = props.scale * 1000;
+        // Sequential z-index: card 0 at bottom, card 4 at top
+        sprite.zIndex = 100 + (index * 10);
         sprite.visible = true;
         
         gsap.to(sprite, {
