@@ -32,20 +32,20 @@ $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' . urle
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #000000;
+            background: #F7B4CD;
             min-height: 100vh;
             padding: 20px;
-            color: #ffffff;
+            color: #2c2c2c;
         }
         
         .container {
-            background: #111111;
-            max-width: 600px;
-            margin: 50px auto;
+            background: rgba(255, 255, 255, 0.85);
+            max-width: 900px;
+            margin: 0 auto;
             padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(255, 215, 0, 0.1);
-            border: 1px solid #333;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
             text-align: center;
         }
         

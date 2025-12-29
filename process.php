@@ -58,14 +58,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['image'])) {
     
     // Define transparent box positions (left and right)
     // Template dimensions: 1800x1200
-    // Left box: starts at x=48, y=66, size 810x810
-    // Right box: starts at x=945, y=66, size 810x810
+    // Left box: starts at x=48, y=66, size 810x820
+    // Right box: starts at x=945, y=66, size 810x820
     
     $boxWidth = 810;
-    $boxHeight = 810;
+    $boxHeight = 820;
     $leftBoxX = 48;
     $rightBoxX = 945;
-    $boxY = 66;
+    $boxY = 73;
     
     // Resize square image to fit box dimensions (810x810) - no stretching!
     $resizedSquare = imagecreatetruecolor($boxWidth, $boxHeight);

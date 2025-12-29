@@ -26,20 +26,20 @@ $imageUrl = $imagePath;
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #000000;
+            background: #F7B4CD;
             min-height: 100vh;
             padding: 20px;
-            color: #ffffff;
+            color: #2c2c2c;
         }
         
         .container {
-            background: #111111;
+            background: rgba(255, 255, 255, 0.85);
             max-width: 900px;
             margin: 0 auto;
             padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(255, 215, 0, 0.1);
-            border: 1px solid #333;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
             text-align: center;
         }
         
@@ -114,7 +114,7 @@ $imageUrl = $imagePath;
         }
         
         .download-btn:hover {
-            background: #218838;
+            background: #ff1493;
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(40, 167, 69, 0.3);
             text-decoration: none;

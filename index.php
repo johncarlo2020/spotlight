@@ -12,20 +12,20 @@
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #000000;
+            background: #F7B4CD;
             min-height: 100vh;
             padding: 20px;
-            color: #ffffff;
+            color: #2c2c2c;
         }
         
         .container {
-            background: #111111;
+            background: rgba(255, 255, 255, 0.85);
             max-width: 900px;
             margin: 0 auto;
             padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(255, 255, 255, 0.05);
-            border: 1px solid #333;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
         }
         
         .logo {
@@ -52,18 +52,18 @@
         }
         
         form {
-            background: #1a1a1a;
+            background: rgba(50, 50, 50, 0.85);
             padding: 30px;
             border-radius: 10px;
             margin-bottom: 30px;
-            border: 1px solid #333;
+            border: 2px solid rgba(255, 105, 180, 0.3);
         }
         
         label {
             display: block;
             margin: 20px 0 8px 0;
             font-weight: 600;
-            color: #fff;
+            color: rgba(255, 255, 255, 0.9);
             font-size: 1.1rem;
         }
         
@@ -71,23 +71,23 @@
             width: 100%;
             padding: 15px;
             margin-bottom: 20px;
-            border: 2px solid #444;
+            border: 2px solid rgba(255, 105, 180, 0.3);
             border-radius: 8px;
             font-size: 16px;
             transition: all 0.3s ease;
-            background: #222;
-            color: #fff;
+            background: rgba(255, 255, 255, 0.9);
+            color: #4a4a4a;
         }
         
         input[type="text"]:focus, input[type="file"]:focus {
             outline: none;
-            border-color: #666;
-            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+            border-color: #ff69b4;
+            box-shadow: 0 0 0 3px rgba(255, 105, 180, 0.2);
         }
         
         input[type="submit"] {
-            background: #fff;
-            color: #000;
+            background: #ff69b4;
+            color: #fff;
             padding: 15px 40px;
             border: none;
             border-radius: 8px;
@@ -107,10 +107,10 @@
         }
         
         .print-btn {
-            background: #666666;
-            color: white;
+            background: rgba(255, 255, 255, 0.9);
+            color: #ff69b4;
             padding: 12px 30px;
-            border: none;
+            border: 2px solid #ff69b4;
             border-radius: 8px;
             cursor: pointer;
             font-size: 16px;
@@ -120,13 +120,14 @@
         }
         
         .print-btn:hover {
-            background: #555;
+            background: #ff69b4;
+            color: white;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 102, 102, 0.3);
+            box-shadow: 0 5px 15px rgba(255, 105, 180, 0.4);
         }
         
         .share-btn {
-            background: #888888;
+            background: #ff69b4;
             color: white;
             padding: 12px 30px;
             border: none;
@@ -139,22 +140,22 @@
         }
         
         .share-btn:hover {
-            background: #777;
+            background: #ff1493;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(136, 136, 136, 0.3);
+            box-shadow: 0 5px 15px rgba(255, 105, 180, 0.4);
         }
         
         .result {
             text-align: center;
             margin-top: 40px;
             padding: 30px;
-            background: #1a1a1a;
+            background: rgba(255, 255, 255, 0.9);
             border-radius: 10px;
-            border: 1px solid #333;
+            border: 1px solid rgba(255, 105, 180, 0.3);
         }
         
         .result h3 {
-            color: #fff;
+            color: #4a4a4a;
             margin-bottom: 20px;
             font-size: 1.8rem;
             font-weight: 700;
@@ -176,7 +177,7 @@
         
         .result p {
             font-size: 1.2rem;
-            color: #ccc;
+            color: #666;
             margin: 15px 0;
         }
         
@@ -290,7 +291,7 @@
         </div>
         
         <div style="text-align: center; margin-bottom: 30px;">
-            <a href="gallery.php" style="background: #666; color: #fff; padding: 15px 30px; border-radius: 25px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; font-size: 16px; display: inline-block;" onmouseover="this.style.background='#555'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='#666'; this.style.transform='translateY(0)';">📸 View Gallery</a>
+            <a href="gallery.php" style="background: rgba(255, 255, 255, 0.9); color: #ff69b4; padding: 15px 30px; border-radius: 25px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; font-size: 16px; display: inline-block; border: 2px solid #ff69b4;" onmouseover="this.style.background='#ff69b4'; this.style.color='white'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255, 255, 255, 0.9)'; this.style.color='#ff69b4'; this.style.transform='translateY(0)';">📸 View Gallery</a>
         </div>
     <?php
     $outputImg = isset($_GET['output']) ? $_GET['output'] : '';

@@ -52,8 +52,8 @@ $currentImages = array_slice($images, $offset, $itemsPerPage);
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #000000;
-            color: #ffffff;
+            background: #F7B4CD;
+            color: #2c2c2c;
             padding: 20px;
             min-height: 100vh;
         }
@@ -75,18 +75,18 @@ $currentImages = array_slice($images, $offset, $itemsPerPage);
         }
         
         .header h1 {
-            color: #fff;
+            color: #ff69b4;
             font-size: 3rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 4px;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            text-shadow: 0 0 20px rgba(255, 105, 180, 0.3);
             margin-bottom: 10px;
             display: none;
         }
         
         .header p {
-            color: #ccc;
+            color: #666;
             font-size: 1.2rem;
             margin-bottom: 20px;
             display: none;
@@ -94,11 +94,11 @@ $currentImages = array_slice($images, $offset, $itemsPerPage);
         
         .stats {
             display: inline-block;
-            background: #1a1a1a;
+            background: rgba(255, 255, 255, 0.9);
             padding: 10px 20px;
             border-radius: 20px;
-            border: 1px solid #333;
-            color: #fff;
+            border: 2px solid rgba(255, 105, 180, 0.3);
+            color: #4a4a4a;
             font-weight: 600;
         }
         
@@ -115,18 +115,18 @@ $currentImages = array_slice($images, $offset, $itemsPerPage);
         }
         
         .image-card {
-            background: #1a1a1a;
+            background: rgba(255, 255, 255, 0.9);
             border-radius: 15px;
             overflow: hidden;
-            border: 1px solid #333;
+            border: 2px solid rgba(255, 105, 180, 0.2);
             transition: all 0.3s ease;
             cursor: pointer;
         }
         
         .image-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(255, 255, 255, 0.1);
-            border-color: #666;
+            box-shadow: 0 20px 40px rgba(255, 105, 180, 0.3);
+            border-color: #ff69b4;
         }
         
         .image-wrapper {
@@ -153,7 +153,7 @@ $currentImages = array_slice($images, $offset, $itemsPerPage);
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 100%);
+            background: linear-gradient(to bottom, transparent 0%, rgba(255, 105, 180, 0.8) 100%);
             display: flex;
             align-items: flex-end;
             padding: 20px;
@@ -171,12 +171,12 @@ $currentImages = array_slice($images, $offset, $itemsPerPage);
         
         .image-info p {
             font-size: 0.9rem;
-            color: #ccc;
+            color: #666;
         }
         
         .card-actions {
             padding: 15px;
-            background: #111;
+            background: rgba(255, 255, 255, 0.5);
             display: flex;
             gap: 10px;
             justify-content: center;
@@ -195,32 +195,34 @@ $currentImages = array_slice($images, $offset, $itemsPerPage);
         }
         
         .view-btn {
-            background: #666;
+            background: #ff69b4;
             color: white;
         }
         
         .view-btn:hover {
-            background: #555;
+            background: #ff1493;
             transform: translateY(-2px);
         }
         
         .share-btn {
-            background: #888;
-            color: white;
+            background: rgba(255, 255, 255, 0.9);
+            color: #ff69b4;
+            border: 2px solid #ff69b4;
         }
         
         .share-btn:hover {
-            background: #777;
+            background: #ff69b4;
+            color: white;
             transform: translateY(-2px);
         }
         
         .print-btn {
-            background: #666;
+            background: #ff69b4;
             color: white;
         }
         
         .print-btn:hover {
-            background: #555;
+            background: #ff1493;
             transform: translateY(-2px);
         }
         
@@ -241,37 +243,41 @@ $currentImages = array_slice($images, $offset, $itemsPerPage);
         }
         
         .pagination a {
-            background: #1a1a1a;
-            color: #fff;
-            border: 1px solid #333;
+            background: rgba(255, 255, 255, 0.9);
+            color: #ff69b4;
+            border: 2px solid rgba(255, 105, 180, 0.3);
         }
         
         .pagination a:hover {
-            background: #666;
+            background: #ff69b4;
+            color: white;
+            border-color: #ff69b4;
+        }
             color: #fff;
             transform: translateY(-2px);
         }
         
         .pagination .current {
-            background: #fff;
-            color: #000;
-            border: 1px solid #fff;
+            background: #ff69b4;
+            color: #fff;
+            border: 2px solid #ff69b4;
         }
         
         .pagination .disabled {
-            background: #333;
-            color: #666;
+            background: rgba(255, 255, 255, 0.5);
+            color: #999;
             cursor: not-allowed;
+            border: 2px solid rgba(255, 105, 180, 0.2);
         }
         
         .back-btn {
             position: fixed;
             top: 20px;
             left: 20px;
-            background: #1a1a1a;
-            color: #fff;
+            background: rgba(255, 255, 255, 0.9);
+            color: #ff69b4;
             padding: 12px 20px;
-            border: 1px solid #333;
+            border: 2px solid #ff69b4;
             border-radius: 25px;
             text-decoration: none;
             font-weight: 600;
@@ -280,7 +286,7 @@ $currentImages = array_slice($images, $offset, $itemsPerPage);
         }
         
         .back-btn:hover {
-            background: #666;
+            background: #ff69b4;
             color: #fff;
             transform: translateY(-2px);
         }
@@ -291,13 +297,13 @@ $currentImages = array_slice($images, $offset, $itemsPerPage);
         }
         
         .empty-state h2 {
-            color: #666;
+            color: #4a4a4a;
             font-size: 2rem;
             margin-bottom: 20px;
         }
         
         .empty-state p {
-            color: #999;
+            color: #666;
             font-size: 1.2rem;
         }
         
@@ -315,19 +321,21 @@ $currentImages = array_slice($images, $offset, $itemsPerPage);
         }
         
         .modal-content {
-            background: #111111;
+            background: rgba(255, 255, 255, 0.95);
             margin: 5% auto;
             padding: 30px;
             border-radius: 15px;
             width: 90%;
             max-width: 500px;
             text-align: center;
-            border: 1px solid #333;
+            border: 2px solid rgba(255, 105, 180, 0.3);
+            box-shadow: 0 10px 40px rgba(255, 105, 180, 0.3);
+        }
             position: relative;
         }
         
         .close-modal {
-            color: #fff;
+            color: #ff69b4;
             float: right;
             font-size: 28px;
             font-weight: bold;
@@ -338,11 +346,11 @@ $currentImages = array_slice($images, $offset, $itemsPerPage);
         }
         
         .close-modal:hover {
-            color: #aaa;
+            color: #ff1493;
         }
         
         .modal h3 {
-            color: #fff;
+            color: #4a4a4a;
             margin-bottom: 20px;
             font-size: 1.5rem;
             text-transform: uppercase;
@@ -351,17 +359,17 @@ $currentImages = array_slice($images, $offset, $itemsPerPage);
         .modal-qr {
             margin: 20px 0;
             padding: 20px;
-            background: #1a1a1a;
+            background: rgba(255, 255, 255, 0.8);
             border-radius: 10px;
-            border: 1px solid #333;
+            border: 2px solid rgba(255, 105, 180, 0.2);
         }
         
         .modal-url {
-            background: #1a1a1a;
+            background: rgba(255, 255, 255, 0.8);
             padding: 15px;
             border-radius: 8px;
             margin: 20px 0;
-            border: 2px solid #333;
+            border: 2px solid rgba(255, 105, 180, 0.3);
             word-break: break-all;
         }
         
@@ -369,13 +377,13 @@ $currentImages = array_slice($images, $offset, $itemsPerPage);
             width: 100%;
             border: none;
             background: transparent;
-            color: #fff;
+            color: #4a4a4a;
             text-align: center;
             font-size: 14px;
         }
         
         .copy-btn {
-            background: #666;
+            background: #ff69b4;
             color: #fff;
             padding: 10px 20px;
             border: none;
@@ -386,7 +394,7 @@ $currentImages = array_slice($images, $offset, $itemsPerPage);
         }
         
         .copy-btn:hover {
-            background: #888;
+            background: #ff1493;
         }
         
         /* iPad Optimization */
