@@ -120,21 +120,20 @@ $latestImages = array_slice($images, 0, 15);
             align-items: center;
             justify-content: center;
             gap: 15px;
-            transition: all 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             position: relative;
         }
         
-        /* Sliding animation for right-to-left movement */
-        .carousel-track.sliding {
-            animation: slideLeft 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        /* Continuous infinite sliding animation for right-to-left movement */
+        .carousel-track.animate-left {
+            animation: continuousSlideLeft 4s linear infinite;
         }
         
-        /* Sliding animation for left-to-right movement (middle carousel) */
-        .carousel-track.sliding-right {
-            animation: slideRight 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        /* Continuous infinite sliding animation for left-to-right movement (middle carousel) */
+        .carousel-track.animate-right {
+            animation: continuousSlideRight 4s linear infinite;
         }
         
-        @keyframes slideLeft {
+        @keyframes continuousSlideLeft {
             0% {
                 transform: translateX(0);
             }
@@ -143,7 +142,7 @@ $latestImages = array_slice($images, 0, 15);
             }
         }
         
-        @keyframes slideRight {
+        @keyframes continuousSlideRight {
             0% {
                 transform: translateX(0);
             }
@@ -158,8 +157,7 @@ $latestImages = array_slice($images, 0, 15);
             width: 180px;
             height: 270px;
             flex-shrink: 0;
-            transition: transform 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
-                        opacity 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: transform 0.5s ease-out, opacity 0.5s ease-out;
             opacity: 1;
         }
         
@@ -248,18 +246,86 @@ $latestImages = array_slice($images, 0, 15);
             z-index: 5;
         }
         
-        /* Position-based styling for 5 images - scales applied via inline style for smooth transition */
-        .card-wrapper.far-left {
-            opacity: 0.85;
+        /* Scale animations for moving left (right-to-left carousel) */
+        .card-wrapper.scale-left-to-farLeft {
+            animation: scaleLeftToFarLeft 4s linear infinite;
         }
         
+        .card-wrapper.scale-center-to-left {
+            animation: scaleCenterToLeft 4s linear infinite;
+        }
+        
+        .card-wrapper.scale-right-to-center {
+            animation: scaleRightToCenter 4s linear infinite;
+        }
+        
+        .card-wrapper.scale-farRight-to-right {
+            animation: scaleFarRightToRight 4s linear infinite;
+        }
+        
+        /* Scale animations for moving right (left-to-right carousel) */
+        .card-wrapper.scale-farLeft-to-left {
+            animation: scaleFarLeftToLeft 4s linear infinite;
+        }
+        
+        .card-wrapper.scale-left-to-center {
+            animation: scaleLeftToCenter 4s linear infinite;
+        }
+        
+        .card-wrapper.scale-center-to-right {
+            animation: scaleCenterToRight 4s linear infinite;
+        }
+        
+        .card-wrapper.scale-right-to-farRight {
+            animation: scaleRightToFarRight 4s linear infinite;
+        }
+        
+        /* Keyframes for moving left */
+        @keyframes scaleLeftToFarLeft {
+            0% { transform: scale(1.05); opacity: 0.9; }
+            100% { transform: scale(1.0); opacity: 0.85; }
+        }
+        
+        @keyframes scaleCenterToLeft {
+            0% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1.05); opacity: 0.9; }
+        }
+        
+        @keyframes scaleRightToCenter {
+            0% { transform: scale(1.05); opacity: 0.9; }
+            100% { transform: scale(1.2); opacity: 1; }
+        }
+        
+        @keyframes scaleFarRightToRight {
+            0% { transform: scale(1.0); opacity: 0.85; }
+            100% { transform: scale(1.05); opacity: 0.9; }
+        }
+        
+        /* Keyframes for moving right */
+        @keyframes scaleFarLeftToLeft {
+            0% { transform: scale(1.0); opacity: 0.85; }
+            100% { transform: scale(1.05); opacity: 0.9; }
+        }
+        
+        @keyframes scaleLeftToCenter {
+            0% { transform: scale(1.05); opacity: 0.9; }
+            100% { transform: scale(1.2); opacity: 1; }
+        }
+        
+        @keyframes scaleCenterToRight {
+            0% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1.05); opacity: 0.9; }
+        }
+        
+        @keyframes scaleRightToFarRight {
+            0% { transform: scale(1.05); opacity: 0.9; }
+            100% { transform: scale(1.0); opacity: 0.85; }
+        }
+        
+        /* Position-based styling for 5 images - scales and opacity handled by animations */
         .card-wrapper.far-left .card {
             transform: rotateY(15deg);
             filter: brightness(0.85);
-        }
-        
-        .card-wrapper.left {
-            opacity: 0.9;
         }
         
         .card-wrapper.left .card {
@@ -272,17 +338,9 @@ $latestImages = array_slice($images, 0, 15);
             filter: brightness(1);
         }
         
-        .card-wrapper.right {
-            opacity: 0.9;
-        }
-        
         .card-wrapper.right .card {
             transform: rotateY(-8deg);
             filter: brightness(0.92);
-        }
-        
-        .card-wrapper.far-right {
-            opacity: 0.85;
         }
         
         .card-wrapper.far-right .card {
@@ -388,6 +446,32 @@ function getScaleForPosition(position) {
     }
 }
 
+// Get scale animation class for continuous movement
+function getScaleAnimationClass(carouselIndex, position) {
+    const isMiddleCarousel = carouselIndex === 1;
+    
+    if (isMiddleCarousel) {
+        // Moving right
+        switch(position) {
+            case 'far-left': return 'scale-farLeft-to-left';
+            case 'left': return 'scale-left-to-center';
+            case 'center': return 'scale-center-to-right';
+            case 'right': return 'scale-right-to-farRight';
+            case 'far-right': return '';
+        }
+    } else {
+        // Moving left
+        switch(position) {
+            case 'far-left': return '';
+            case 'left': return 'scale-left-to-farLeft';
+            case 'center': return 'scale-center-to-left';
+            case 'right': return 'scale-right-to-center';
+            case 'far-right': return 'scale-farRight-to-right';
+        }
+    }
+    return '';
+}
+
 // Render a single carousel
 function renderCarousel(carouselIndex) {
     const track = document.getElementById(`track-${carouselIndex}`);
@@ -404,11 +488,10 @@ function renderCarousel(carouselIndex) {
         else if (index === 3) position = 'right';
         else if (index === 4) position = 'far-right';
         
-        const scale = getScaleForPosition(position);
+        const scaleAnimClass = getScaleAnimationClass(carouselIndex, position);
         
         const cardWrapper = document.createElement('div');
-        cardWrapper.className = `card-wrapper ${position}`;
-        cardWrapper.style.transform = `scale(${scale})`;
+        cardWrapper.className = `card-wrapper ${position} ${scaleAnimClass}`;
         cardWrapper.innerHTML = `
             <div class="card">
                 <img src="${image.path}" alt="Image ${image.filename}">
@@ -425,147 +508,44 @@ function renderGallery() {
     }
 }
 
-// Auto-rotate carousel - continuously moves photos from right to left
+// Auto-rotate carousel - continuously moves photos
 function startAutoRotation(carouselIndex) {
-    // Clear existing interval if any
-    if (autoRotateIntervals[carouselIndex]) {
-        clearInterval(autoRotateIntervals[carouselIndex]);
-    }
-    
     const carousel = carousels[carouselIndex];
-    if (carousel.images.length < 2) return; // Need at least 2 images to rotate
+    if (carousel.images.length < 2) return;
     
-    // Middle carousel (index 1) moves left-to-right, others move right-to-left
+    const track = document.getElementById(`track-${carouselIndex}`);
     const isMiddleCarousel = carouselIndex === 1;
     
-    // Rotate every 4 seconds
+    // Start continuous animation
+    if (isMiddleCarousel) {
+        track.classList.add('animate-right');
+    } else {
+        track.classList.add('animate-left');
+    }
+    
+    // Rotate images every 4 seconds to match animation cycle
     autoRotateIntervals[carouselIndex] = setInterval(() => {
-        if (carousel.images.length < 2) return;
-        
-        const track = document.getElementById(`track-${carouselIndex}`);
-        const cards = track.querySelectorAll('.card-wrapper');
-        
         if (isMiddleCarousel) {
-            // Middle carousel: move from LEFT TO RIGHT
-            const movingImage = carousel.images[carousel.images.length - 1]; // Last image
-            
-            // Add the moving image to the left side temporarily
-            const newCardWrapper = document.createElement('div');
-            newCardWrapper.className = 'card-wrapper far-left slide-in-left temp-card';
-            newCardWrapper.style.transform = 'scale(1.0)';
-            newCardWrapper.innerHTML = `
-                <div class="card">
-                    <img src="${movingImage.path}" alt="Image ${movingImage.filename}">
-                </div>
-            `;
-            track.insertBefore(newCardWrapper, track.firstChild);
-            
-            // Update scales for existing cards BEFORE animation starts
-            // Cards shift right: far-left->left, left->center, center->right, right->far-right
-            // Skip the last card as it's fading out
-            for (let i = 0; i < cards.length - 1; i++) {
-                let newPosition = '';
-                if (i === 0) newPosition = 'left';
-                else if (i === 1) newPosition = 'center';
-                else if (i === 2) newPosition = 'right';
-                else if (i === 3) newPosition = 'far-right';
-                
-                const scale = getScaleForPosition(newPosition);
-                cards[i].style.transform = `scale(${scale})`;
-            }
-            
-            // Add fade-out animation to rightmost card
-            if (cards[cards.length - 1]) {
-                cards[cards.length - 1].classList.add('fade-out-right');
-            }
-            
-            // Add sliding animation to track (right direction)
-            track.classList.add('sliding-right');
-            
-            // After animation completes, clean up without re-rendering
-            setTimeout(() => {
-                // Move last image to the beginning (rotate right)
-                const lastImage = carousel.images.pop();
-                carousel.images.unshift(lastImage);
-                
-                // Remove animation class
-                track.classList.remove('sliding-right');
-                
-                // Remove the faded-out rightmost card
-                const allCards = track.querySelectorAll('.card-wrapper');
-                if (allCards[allCards.length - 1]) {
-                    allCards[allCards.length - 1].remove();
-                }
-                
-                // Update classes on remaining cards to match their new positions
-                const remainingCards = track.querySelectorAll('.card-wrapper');
-                const positions = ['far-left', 'left', 'center', 'right', 'far-right'];
-                remainingCards.forEach((card, idx) => {
-                    card.className = `card-wrapper ${positions[idx]}`;
-                    card.classList.remove('slide-in-left', 'temp-card', 'fade-out-right');
-                });
-            }, 1500);
+            // Moving right: shift last to first
+            const lastImage = carousel.images.pop();
+            carousel.images.unshift(lastImage);
         } else {
-            // Top and bottom carousels: move from RIGHT TO LEFT
-            const movingImage = carousel.images[0]; // First image
-            
-            // Add the moving image to the right side temporarily
-            const newCardWrapper = document.createElement('div');
-            newCardWrapper.className = 'card-wrapper far-right slide-in-right temp-card';
-            newCardWrapper.style.transform = 'scale(1.0)';
-            newCardWrapper.innerHTML = `
-                <div class="card">
-                    <img src="${movingImage.path}" alt="Image ${movingImage.filename}">
-                </div>
-            `;
-            track.appendChild(newCardWrapper);
-            
-            // Add fade-out animation to leftmost card
-            if (cards[0]) {
-                cards[0].classList.add('fade-out-left');
-            }
-            
-            // Update scales for existing cards BEFORE animation starts
-            // Cards shift left: left->far-left, center->left, right->center, far-right->right
-            // Skip the first card (index 0) as it's fading out
-            for (let i = 1; i < cards.length; i++) {
-                let newPosition = '';
-                if (i === 1) newPosition = 'far-left';
-                else if (i === 2) newPosition = 'left';
-                else if (i === 3) newPosition = 'center';
-                else if (i === 4) newPosition = 'right';
-                
-                const scale = getScaleForPosition(newPosition);
-                cards[i].style.transform = `scale(${scale})`;
-            }
-            
-            // Add sliding animation to track (left direction)
-            track.classList.add('sliding');
-            
-            // After animation completes, clean up without re-rendering
-            setTimeout(() => {
-                // Move first image to the end (rotate left)
-                const firstImage = carousel.images.shift();
-                carousel.images.push(firstImage);
-                
-                // Remove animation class
-                track.classList.remove('sliding');
-                
-                // Remove the faded-out leftmost card
-                const allCards = track.querySelectorAll('.card-wrapper');
-                if (allCards[0]) {
-                    allCards[0].remove();
-                }
-                
-                // Update classes on remaining cards to match their new positions
-                const remainingCards = track.querySelectorAll('.card-wrapper');
-                const positions = ['far-left', 'left', 'center', 'right', 'far-right'];
-                remainingCards.forEach((card, idx) => {
-                    card.className = `card-wrapper ${positions[idx]}`;
-                    card.classList.remove('slide-in-right', 'temp-card', 'fade-out-left');
-                });
-            }, 1500);
+            // Moving left: shift first to last
+            const firstImage = carousel.images.shift();
+            carousel.images.push(firstImage);
         }
+        
+        // Re-render with new positions
+        renderCarousel(carouselIndex);
+        
+        // Re-apply animation class after render
+        setTimeout(() => {
+            if (isMiddleCarousel) {
+                track.classList.add('animate-right');
+            } else {
+                track.classList.add('animate-left');
+            }
+        }, 10);
     }, 4000);
 }
 
