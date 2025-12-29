@@ -142,11 +142,11 @@ $latestImages = array_slice($images, 0, 15);
 const initialImages = <?php echo json_encode($latestImages, JSON_HEX_TAG | JSON_HEX_AMP); ?>;
 console.log('Initial images loaded:', initialImages);
 
-// Maximum 15 images in the gallery (5 per carousel)
-const maxImages = 15;
-const maxPerCarousel = 5;
+// Maximum 18 images in the gallery (6 per carousel: 5 showing + 1 buffer)
+const maxImages = 18;
+const maxPerCarousel = 6;
 
-// Carousel state - 3 carousels with 5 images each
+// Carousel state - 3 carousels with 6 images each
 const carousels = [
     { images: [], sprites: [], container: null, direction: -1 }, // Move left
     { images: [], sprites: [], container: null, direction: 1 },  // Move right
@@ -155,20 +155,30 @@ const carousels = [
 
 let nextCarouselIndex = 0;
 let app = null;
-const CARD_WIDTH = 180;
-const CARD_HEIGHT = 270;
-const CARD_GAP = 15;
+const CARD_WIDTH = 240;
+const CARD_HEIGHT = 360;
+const CARD_GAP = -40; // Negative gap for overlap
 const CARD_RADIUS = 15;
 
-// Distribute images across carousels
+// Distribute images across carousels evenly (each carousel needs 6 images minimum)
 function distributeImages(images) {
     if (!images || images.length === 0) return;
     
-    // Distribute evenly
-    for (let i = 0; i < images.length && i < maxImages; i++) {
-        const carouselIndex = Math.floor(i / maxPerCarousel);
-        carousels[carouselIndex].images.push(images[i]);
+    // Need at least 18 images (6 per carousel) for proper operation
+    let imagesToUse = [...images];
+    
+    // If we have less than 18 images, duplicate them to fill
+    while (imagesToUse.length < 18) {
+        imagesToUse = [...imagesToUse, ...images].slice(0, 18);
     }
+    
+    // Distribute round-robin to ensure even distribution
+    for (let i = 0; i < imagesToUse.length && i < maxImages; i++) {
+        const carouselIndex = i % 3;
+        carousels[carouselIndex].images.push(imagesToUse[i]);
+    }
+    
+    console.log(`📊 Distribution: Carousel 0: ${carousels[0].images.length}, Carousel 1: ${carousels[1].images.length}, Carousel 2: ${carousels[2].images.length}`);
 }
 
 // Initialize PixiJS Application
@@ -194,6 +204,7 @@ function initPixiApp() {
     carousels.forEach((carousel, index) => {
         carousel.container = new PIXI.Container();
         carousel.container.y = index * rowHeight + rowHeight / 2;
+        carousel.container.sortableChildren = true; // Enable z-index sorting
         app.stage.addChild(carousel.container);
     });
     
@@ -271,33 +282,63 @@ async function createPhotoSprite(imagePath, carouselIndex) {
     });
 }
 
-// Get scale, alpha, and rotation based on position for 3D effect
-function getPositionProperties(index, total) {
+// Get scale and alpha based on position for symmetric effect (5 visible + 1 buffer off-screen)
+function getPositionProperties(index, total, direction = -1) {
+    if (index === 5) {
+        // Buffer position (off-screen, ready to animate in)
+        if (direction === -1) {
+            // Moving left, buffer waits on the right
+            return { scale: 0.8, alpha: 0, offScreenOffset: 250 };
+        } else {
+            // Moving right, buffer waits on the left
+            return { scale: 0.8, alpha: 0, offScreenOffset: -250 };
+        }
+    }
+    
     const positions = [
-        { scale: 1.0, alpha: 0.85, rotation: 0.05 },   // far-left
-        { scale: 1.05, alpha: 0.9, rotation: 0.02 },   // left
-        { scale: 1.2, alpha: 1.0, rotation: 0 },        // center
-        { scale: 1.05, alpha: 0.9, rotation: -0.02 },  // right
-        { scale: 1.0, alpha: 0.85, rotation: -0.05 }   // far-right
+        { scale: 0.8, alpha: 0.7, offScreenOffset: 0 },     // far-left (index 0)
+        { scale: 0.9, alpha: 0.8, offScreenOffset: 0 },     // left (index 1)
+        { scale: 1.15, alpha: 1.0, offScreenOffset: 0 },    // CENTER (biggest) - index 2
+        { scale: 0.9, alpha: 0.8, offScreenOffset: 0 },     // right (index 3)
+        { scale: 0.8, alpha: 0.7, offScreenOffset: 0 }      // far-right (index 4)
     ];
     
-    return positions[index] || { scale: 1.0, alpha: 1.0, rotation: 0 };
+    return positions[index] || { scale: 0.8, alpha: 0.7, offScreenOffset: 0 };
 }
 
-// Position sprites in carousel
+// Position sprites in carousel with center card (index 2) in middle of screen
 function positionSprites(carouselIndex) {
     const carousel = carousels[carouselIndex];
-    const totalWidth = carousel.sprites.length * (CARD_WIDTH + CARD_GAP) - CARD_GAP;
-    const startX = (1080 - totalWidth) / 2;
+    const centerIndex = 2; // Fixed center for 5 visible cards (0,1,2,3,4)
+    const centerX = 540; // Middle of 1080px screen
+    const direction = carousel.direction;
     
     carousel.sprites.forEach((sprite, index) => {
-        const targetX = startX + index * (CARD_WIDTH + CARD_GAP) + CARD_WIDTH / 2;
-        const props = getPositionProperties(index, carousel.sprites.length);
+        const props = getPositionProperties(index, carousel.sprites.length, direction);
         
-        sprite.x = targetX;
+        if (index === 5) {
+            // Buffer: position off-screen based on direction
+            if (direction === -1) {
+                // Moving left, buffer on the right
+                sprite.x = centerX + (4 - centerIndex) * (CARD_WIDTH + CARD_GAP) + props.offScreenOffset;
+            } else {
+                // Moving right, buffer on the left
+                sprite.x = centerX + (0 - centerIndex) * (CARD_WIDTH + CARD_GAP) + props.offScreenOffset;
+            }
+            sprite.visible = false;
+        } else {
+            // Visible cards (0-4)
+            const offsetFromCenter = (index - centerIndex) * (CARD_WIDTH + CARD_GAP);
+            sprite.x = centerX + offsetFromCenter;
+            sprite.visible = true;
+        }
+        
         sprite.scale.set(props.scale);
         sprite.alpha = props.alpha;
+        sprite.zIndex = props.scale * 1000;
     });
+    
+    console.log(`📍 Carousel ${carouselIndex}: ${carousel.sprites.length} sprites, center at index ${centerIndex}, buffer at index 5`);
 }
 
 // Render carousel with PixiJS
@@ -334,28 +375,65 @@ async function renderGallery() {
     console.log('✅ All carousels rendered');
 }
 
-// Animate sprite to new position with 3D effect
+// Animate sprite to new position with scale effect
 function animateSpriteToPosition(sprite, index, carouselIndex, duration = 2) {
     const carousel = carousels[carouselIndex];
-    const props = getPositionProperties(index, carousel.sprites.length);
-    const totalWidth = carousel.sprites.length * (CARD_WIDTH + CARD_GAP) - CARD_GAP;
-    const startX = (1080 - totalWidth) / 2;
-    const targetX = startX + index * (CARD_WIDTH + CARD_GAP) + CARD_WIDTH / 2;
+    const direction = carousel.direction;
+    const props = getPositionProperties(index, carousel.sprites.length, direction);
+    const centerIndex = 2;
+    const centerX = 540;
     
-    gsap.to(sprite, {
-        x: targetX,
-        alpha: props.alpha,
-        rotation: props.rotation,
-        duration: duration,
-        ease: 'power2.inOut'
-    });
+    let targetX;
     
-    gsap.to(sprite.scale, {
-        x: props.scale,
-        y: props.scale,
-        duration: duration,
-        ease: 'power2.inOut'
-    });
+    if (index === 5) {
+        // Buffer position - fade out in place, then teleport off-screen
+        sprite.visible = true;
+        
+        // Fade out in current position (don't move)
+        gsap.to(sprite, {
+            alpha: 0,
+            duration: duration * 0.5,
+            ease: 'power2.in',
+            onComplete: () => {
+                // After fade out, teleport to buffer position off-screen
+                if (direction === -1) {
+                    sprite.x = centerX + (4 - centerIndex) * (CARD_WIDTH + CARD_GAP) + props.offScreenOffset;
+                } else {
+                    sprite.x = centerX + (0 - centerIndex) * (CARD_WIDTH + CARD_GAP) + props.offScreenOffset;
+                }
+                sprite.scale.set(0.8);
+                sprite.visible = false;
+            }
+        });
+        
+        gsap.to(sprite.scale, {
+            x: 0.6,
+            y: 0.6,
+            duration: duration * 0.5,
+            ease: 'power2.in'
+        });
+        
+    } else {
+        // Visible positions (0-4)
+        targetX = centerX + (index - centerIndex) * (CARD_WIDTH + CARD_GAP);
+        
+        sprite.zIndex = props.scale * 1000;
+        sprite.visible = true;
+        
+        gsap.to(sprite, {
+            x: targetX,
+            alpha: props.alpha,
+            duration: duration,
+            ease: 'power2.inOut'
+        });
+        
+        gsap.to(sprite.scale, {
+            x: props.scale,
+            y: props.scale,
+            duration: duration,
+            ease: 'power2.inOut'
+        });
+    }
 }
 
 // Animate all sprites in carousel
@@ -368,122 +446,51 @@ function animateCarousel(carouselIndex) {
     });
 }
 
-// Rotate carousel (shift images with animation)
+// Rotate carousel (shift images with simultaneous fade out/in animation)
 function rotateCarousel(carouselIndex) {
     const carousel = carousels[carouselIndex];
-    if (carousel.images.length < 2 || carousel.sprites.length < 2) return;
+    // Need exactly 6 images for buffer system to work
+    if (carousel.images.length !== 6 || carousel.sprites.length !== 6) {
+        console.warn(`⚠️ Carousel ${carouselIndex} has ${carousel.sprites.length} sprites, needs 6 for proper animation`);
+        return;
+    }
     
-    console.log(`🔄 Rotating carousel ${carouselIndex}`);
+    console.log(`🔄 Rotating carousel ${carouselIndex} with ${carousel.sprites.length} sprites`);
     
     if (carousel.direction === -1) {
-        // Moving left: animate sprites left, then shift
-        const firstSprite = carousel.sprites[0];
-        
-        // Fade out the leftmost sprite
-        gsap.to(firstSprite, {
-            alpha: 0,
-            x: firstSprite.x - 100,
-            duration: 1,
-            ease: 'power2.in',
-            onComplete: () => {
-                // Shift arrays
-                carousel.images.push(carousel.images.shift());
-                carousel.sprites.push(carousel.sprites.shift());
-                
-                // Reset the sprite that wrapped around
-                const wrappedSprite = carousel.sprites[carousel.sprites.length - 1];
-                const props = getPositionProperties(carousel.sprites.length - 1, carousel.sprites.length);
-                const totalWidth = carousel.sprites.length * (CARD_WIDTH + CARD_GAP) - CARD_GAP;
-                const startX = (1080 - totalWidth) / 2;
-                const targetX = startX + (carousel.sprites.length - 1) * (CARD_WIDTH + CARD_GAP) + CARD_WIDTH / 2;
-                
-                wrappedSprite.x = targetX + 200;
-                wrappedSprite.alpha = 0;
-                wrappedSprite.scale.set(0.8);
-                
-                // Animate in from right
-                gsap.to(wrappedSprite, {
-                    x: targetX,
-                    alpha: props.alpha,
-                    duration: 1,
-                    ease: 'power2.out'
-                });
-                
-                gsap.to(wrappedSprite.scale, {
-                    x: props.scale,
-                    y: props.scale,
-                    duration: 1,
-                    ease: 'power2.out'
-                });
-                
-                // Animate all other sprites to new positions
-                for (let i = 0; i < carousel.sprites.length - 1; i++) {
-                    animateSpriteToPosition(carousel.sprites[i], i, carouselIndex, 1);
-                }
-            }
-        });
-        
+        // Moving left: shift first to last (buffer position)
+        carousel.images.push(carousel.images.shift());
+        carousel.sprites.push(carousel.sprites.shift());
     } else {
-        // Moving right: animate sprites right, then shift
-        const lastSprite = carousel.sprites[carousel.sprites.length - 1];
-        
-        // Fade out the rightmost sprite
-        gsap.to(lastSprite, {
-            alpha: 0,
-            x: lastSprite.x + 100,
-            duration: 1,
-            ease: 'power2.in',
-            onComplete: () => {
-                // Shift arrays
-                carousel.images.unshift(carousel.images.pop());
-                carousel.sprites.unshift(carousel.sprites.pop());
-                
-                // Reset the sprite that wrapped around
-                const wrappedSprite = carousel.sprites[0];
-                const props = getPositionProperties(0, carousel.sprites.length);
-                const totalWidth = carousel.sprites.length * (CARD_WIDTH + CARD_GAP) - CARD_GAP;
-                const startX = (1080 - totalWidth) / 2;
-                const targetX = startX + CARD_WIDTH / 2;
-                
-                wrappedSprite.x = targetX - 200;
-                wrappedSprite.alpha = 0;
-                wrappedSprite.scale.set(0.8);
-                
-                // Animate in from left
-                gsap.to(wrappedSprite, {
-                    x: targetX,
-                    alpha: props.alpha,
-                    duration: 1,
-                    ease: 'power2.out'
-                });
-                
-                gsap.to(wrappedSprite.scale, {
-                    x: props.scale,
-                    y: props.scale,
-                    duration: 1,
-                    ease: 'power2.out'
-                });
-                
-                // Animate all other sprites to new positions
-                for (let i = 1; i < carousel.sprites.length; i++) {
-                    animateSpriteToPosition(carousel.sprites[i], i, carouselIndex, 1);
-                }
-            }
-        });
+        // Moving right: shift last to first (buffer position)
+        carousel.images.unshift(carousel.images.pop());
+        carousel.sprites.unshift(carousel.sprites.pop());
     }
+    
+    // Animate all sprites to their new positions
+    // Index 0-4: visible cards slide into place
+    // Index 5: moves to buffer position off-screen
+    // What was at index 5 is now at index 0 or 4 and animates in
+    carousel.sprites.forEach((sprite, index) => {
+        animateSpriteToPosition(sprite, index, carouselIndex, 1.5);
+    });
 }
 
 // Start auto-rotation with interval
 function startAutoRotation(carouselIndex) {
     const carousel = carousels[carouselIndex];
-    if (carousel.images.length < 2) return;
+    // Need exactly 6 images for buffer system
+    if (carousel.images.length < 6) {
+        console.warn(`⚠️ Carousel ${carouselIndex} has only ${carousel.images.length} images, needs 6. Skipping auto-rotation.`);
+        return;
+    }
     
-    console.log(`▶️ Starting auto-rotation for carousel ${carouselIndex}`);
+    console.log(`▶️ Starting auto-rotation for carousel ${carouselIndex} with ${carousel.images.length} images`);
     
     // Initial animation to set positions
     animateCarousel(carouselIndex);
     
-    // Rotate every 3 seconds (1s fade out + 1s fade in + 1s pause)
+    // Rotate every 3 seconds
     setInterval(() => {
         rotateCarousel(carouselIndex);
     }, 3000);
