@@ -94,291 +94,32 @@ $latestImages = array_slice($images, 0, 15);
             height: 200px;
         }
         
-        .feed-container {
-            width: 1080px;
-            height: 1920px;
-            padding-top: 240px;
-            display: flex;
-            flex-direction: column;
-            gap: 0;
-            position: relative;
+        /* Decorations positioning */
+        .decoration.lantern { 
+            top: 50px; 
+            right: 100px; 
+        }
+        
+        .decoration.flower { 
+            top: 130px; 
+            left: 80px; 
+        }
+        
+        .decoration.firework { 
+            top: 450px; 
+            right: 120px; 
+        }
+        
+        #pixiCanvas {
+            position: absolute;
+            top: 240px;
+            left: 0;
             z-index: 10;
         }
         
-        .carousel-row {
-            flex: 1;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
+        #pixiCanvas canvas {
+            display: block;
         }
-        
-        .carousel-track {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            position: relative;
-        }
-        
-        /* Continuous infinite sliding animation for right-to-left movement */
-        .carousel-track.animate-left {
-            animation: continuousSlideLeft 4s linear infinite;
-        }
-        
-        /* Continuous infinite sliding animation for left-to-right movement (middle carousel) */
-        .carousel-track.animate-right {
-            animation: continuousSlideRight 4s linear infinite;
-        }
-        
-        @keyframes continuousSlideLeft {
-            0% {
-                transform: translateX(0);
-            }
-            100% {
-                transform: translateX(-195px); /* card width + gap */
-            }
-        }
-        
-        @keyframes continuousSlideRight {
-            0% {
-                transform: translateX(0);
-            }
-            100% {
-                transform: translateX(195px); /* card width + gap */
-            }
-        }
-        
-        .card-wrapper {
-            perspective: 1500px;
-            transform-style: preserve-3d;
-            width: 180px;
-            height: 270px;
-            flex-shrink: 0;
-            transition: transform 0.5s ease-out, opacity 0.5s ease-out;
-            opacity: 1;
-        }
-        
-        /* Fade out leftmost card */
-        .card-wrapper.fade-out-left {
-            animation: fadeOutLeft 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-        }
-        
-        /* Fade out rightmost card (for middle carousel) */
-        .card-wrapper.fade-out-right {
-            animation: fadeOutRight 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-        }
-        
-        @keyframes fadeOutLeft {
-            0% {
-                opacity: 1;
-                transform: translateX(0) scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: translateX(-100px) scale(0.8);
-            }
-        }
-        
-        @keyframes fadeOutRight {
-            0% {
-                opacity: 1;
-                transform: translateX(0) scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: translateX(100px) scale(0.8);
-            }
-        }
-        
-        /* New card slides in from right with bounce effect */
-        .card-wrapper.slide-in {
-            animation: slideFromRight 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-        }
-        
-        /* New image appearing from right during rotation */
-        .card-wrapper.slide-in-right {
-            animation: slideInFromRight 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-        }
-        
-        /* New image appearing from left during rotation (middle carousel) */
-        .card-wrapper.slide-in-left {
-            animation: slideInFromLeft 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-        }
-        
-        @keyframes slideFromRight {
-            0% {
-                opacity: 0;
-                transform: translateX(300px) scale(0.8) rotateY(-25deg);
-            }
-            100% {
-                opacity: 1;
-                transform: translateX(0) scale(1) rotateY(0deg);
-            }
-        }
-        
-        @keyframes slideInFromRight {
-            0% {
-                opacity: 0;
-                transform: translateX(400px) scale(0.8);
-            }
-            100% {
-                opacity: 1;
-                transform: translateX(0) scale(1);
-            }
-        }
-        
-        @keyframes slideInFromLeft {
-            0% {
-                opacity: 0;
-                transform: translateX(-400px) scale(0.8);
-            }
-            100% {
-                opacity: 1;
-                transform: translateX(0) scale(1);
-            }
-        }
-        
-        /* Center card is larger and more prominent */
-        .card-wrapper.center {
-            z-index: 5;
-        }
-        
-        /* Scale animations for moving left (right-to-left carousel) */
-        .card-wrapper.scale-left-to-farLeft {
-            animation: scaleLeftToFarLeft 4s linear infinite;
-        }
-        
-        .card-wrapper.scale-center-to-left {
-            animation: scaleCenterToLeft 4s linear infinite;
-        }
-        
-        .card-wrapper.scale-right-to-center {
-            animation: scaleRightToCenter 4s linear infinite;
-        }
-        
-        .card-wrapper.scale-farRight-to-right {
-            animation: scaleFarRightToRight 4s linear infinite;
-        }
-        
-        /* Scale animations for moving right (left-to-right carousel) */
-        .card-wrapper.scale-farLeft-to-left {
-            animation: scaleFarLeftToLeft 4s linear infinite;
-        }
-        
-        .card-wrapper.scale-left-to-center {
-            animation: scaleLeftToCenter 4s linear infinite;
-        }
-        
-        .card-wrapper.scale-center-to-right {
-            animation: scaleCenterToRight 4s linear infinite;
-        }
-        
-        .card-wrapper.scale-right-to-farRight {
-            animation: scaleRightToFarRight 4s linear infinite;
-        }
-        
-        /* Keyframes for moving left */
-        @keyframes scaleLeftToFarLeft {
-            0% { transform: scale(1.05); opacity: 0.9; }
-            100% { transform: scale(1.0); opacity: 0.85; }
-        }
-        
-        @keyframes scaleCenterToLeft {
-            0% { transform: scale(1.2); opacity: 1; }
-            100% { transform: scale(1.05); opacity: 0.9; }
-        }
-        
-        @keyframes scaleRightToCenter {
-            0% { transform: scale(1.05); opacity: 0.9; }
-            100% { transform: scale(1.2); opacity: 1; }
-        }
-        
-        @keyframes scaleFarRightToRight {
-            0% { transform: scale(1.0); opacity: 0.85; }
-            100% { transform: scale(1.05); opacity: 0.9; }
-        }
-        
-        /* Keyframes for moving right */
-        @keyframes scaleFarLeftToLeft {
-            0% { transform: scale(1.0); opacity: 0.85; }
-            100% { transform: scale(1.05); opacity: 0.9; }
-        }
-        
-        @keyframes scaleLeftToCenter {
-            0% { transform: scale(1.05); opacity: 0.9; }
-            100% { transform: scale(1.2); opacity: 1; }
-        }
-        
-        @keyframes scaleCenterToRight {
-            0% { transform: scale(1.2); opacity: 1; }
-            100% { transform: scale(1.05); opacity: 0.9; }
-        }
-        
-        @keyframes scaleRightToFarRight {
-            0% { transform: scale(1.05); opacity: 0.9; }
-            100% { transform: scale(1.0); opacity: 0.85; }
-        }
-        
-        /* Position-based styling for 5 images - scales and opacity handled by animations */
-        .card-wrapper.far-left .card {
-            transform: rotateY(15deg);
-            filter: brightness(0.85);
-        }
-        
-        .card-wrapper.left .card {
-            transform: rotateY(8deg);
-            filter: brightness(0.92);
-        }
-        
-        .card-wrapper.center .card {
-            transform: rotateY(0deg);
-            filter: brightness(1);
-        }
-        
-        .card-wrapper.right .card {
-            transform: rotateY(-8deg);
-            filter: brightness(0.92);
-        }
-        
-        .card-wrapper.far-right .card {
-            transform: rotateY(-15deg);
-            filter: brightness(0.85);
-        }
-        
-        .card {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: all 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-        
-        .card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: left center;
-            border-radius: 15px;
-            box-shadow: 
-                0 10px 40px rgba(0, 0, 0, 0.3),
-                0 2px 10px rgba(0, 0, 0, 0.2),
-                inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-            transition: all 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-        
-        /* Remove old grid-based rotations */
-        
-        /* Remove old grid-based rotations */
-        
-        /* New image animation - removed old keyframes */
-        
-        /* Decorations positioning */
-        .decoration.lantern { top: 50px; right: 100px; }
-        .decoration.flower { top: 130px; left: 80px; }
-        .decoration.firework { top: 450px; left: 100px; }
     </style>
 </head>
 <body>
@@ -391,18 +132,10 @@ $latestImages = array_slice($images, 0, 15);
     <img src="asset/firework.gif" class="decoration firework" alt="">
 </div>
 
-<div class="feed-container" id="gallery">
-    <div class="carousel-row" data-carousel="0">
-        <div class="carousel-track" id="track-0"></div>
-    </div>
-    <div class="carousel-row" data-carousel="1">
-        <div class="carousel-track" id="track-1"></div>
-    </div>
-    <div class="carousel-row" data-carousel="2">
-        <div class="carousel-track" id="track-2"></div>
-    </div>
-</div>
+<div id="pixiCanvas"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/pixi.js@7.3.2/dist/pixi.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.4/dist/gsap.min.js"></script>
 <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
 <script>
 // Initial images data
@@ -415,13 +148,17 @@ const maxPerCarousel = 5;
 
 // Carousel state - 3 carousels with 5 images each
 const carousels = [
-    { images: [] },
-    { images: [] },
-    { images: [] }
+    { images: [], sprites: [], container: null, direction: -1 }, // Move left
+    { images: [], sprites: [], container: null, direction: 1 },  // Move right
+    { images: [], sprites: [], container: null, direction: -1 }  // Move left
 ];
 
 let nextCarouselIndex = 0;
-let autoRotateIntervals = []; // Store interval IDs for each carousel
+let app = null;
+const CARD_WIDTH = 180;
+const CARD_HEIGHT = 270;
+const CARD_GAP = 15;
+const CARD_RADIUS = 15;
 
 // Distribute images across carousels
 function distributeImages(images) {
@@ -434,130 +171,333 @@ function distributeImages(images) {
     }
 }
 
-// Get scale based on position
-function getScaleForPosition(position) {
-    switch(position) {
-        case 'far-left': return 1.0;
-        case 'left': return 1.05;
-        case 'center': return 1.2;
-        case 'right': return 1.05;
-        case 'far-right': return 1.0;
-        default: return 1.0;
-    }
+// Initialize PixiJS Application
+function initPixiApp() {
+    console.log('🎨 Initializing PixiJS...');
+    
+    app = new PIXI.Application({
+        width: 1080,
+        height: 1680,
+        backgroundColor: 0x000000,
+        backgroundAlpha: 0,
+        antialias: true,
+        resolution: window.devicePixelRatio || 1,
+        autoDensity: true
+    });
+    
+    const canvasContainer = document.getElementById('pixiCanvas');
+    canvasContainer.appendChild(app.view);
+    console.log('✅ PixiJS canvas added to DOM');
+    
+    // Create containers for each carousel
+    const rowHeight = 1680 / 3;
+    carousels.forEach((carousel, index) => {
+        carousel.container = new PIXI.Container();
+        carousel.container.y = index * rowHeight + rowHeight / 2;
+        app.stage.addChild(carousel.container);
+    });
+    
+    console.log('✅ Created 3 carousel containers');
 }
 
-// Get scale animation class for continuous movement
-function getScaleAnimationClass(carouselIndex, position) {
-    const isMiddleCarousel = carouselIndex === 1;
-    
-    if (isMiddleCarousel) {
-        // Moving right
-        switch(position) {
-            case 'far-left': return 'scale-farLeft-to-left';
-            case 'left': return 'scale-left-to-center';
-            case 'center': return 'scale-center-to-right';
-            case 'right': return 'scale-right-to-farRight';
-            case 'far-right': return '';
-        }
-    } else {
-        // Moving left
-        switch(position) {
-            case 'far-left': return '';
-            case 'left': return 'scale-left-to-farLeft';
-            case 'center': return 'scale-center-to-left';
-            case 'right': return 'scale-right-to-center';
-            case 'far-right': return 'scale-farRight-to-right';
-        }
-    }
-    return '';
+// Create rounded rectangle mask for card
+function createRoundedRectTexture(width, height, radius) {
+    const graphics = new PIXI.Graphics();
+    graphics.beginFill(0xFFFFFF);
+    graphics.drawRoundedRect(0, 0, width, height, radius);
+    graphics.endFill();
+    return app.renderer.generateTexture(graphics);
 }
 
-// Render a single carousel
-function renderCarousel(carouselIndex) {
-    const track = document.getElementById(`track-${carouselIndex}`);
-    const carousel = carousels[carouselIndex];
-    
-    track.innerHTML = '';
-    
-    carousel.images.forEach((image, index) => {
-        // Position class for 5 images: far-left, left, center, right, far-right
-        let position = '';
-        if (index === 0) position = 'far-left';
-        else if (index === 1) position = 'left';
-        else if (index === 2) position = 'center';
-        else if (index === 3) position = 'right';
-        else if (index === 4) position = 'far-right';
+// Create a photo sprite with effects
+async function createPhotoSprite(imagePath, carouselIndex) {
+    return new Promise((resolve, reject) => {
+        console.log('📸 Loading image:', imagePath);
         
-        const scaleAnimClass = getScaleAnimationClass(carouselIndex, position);
+        const texture = PIXI.Texture.from(imagePath);
         
-        const cardWrapper = document.createElement('div');
-        cardWrapper.className = `card-wrapper ${position} ${scaleAnimClass}`;
-        cardWrapper.innerHTML = `
-            <div class="card">
-                <img src="${image.path}" alt="Image ${image.filename}">
-            </div>
-        `;
-        track.appendChild(cardWrapper);
+        const onLoaded = () => {
+            console.log('✅ Image loaded:', imagePath);
+            
+            const sprite = new PIXI.Sprite(texture);
+            // Use left-center anchor to match CSS object-position: left center
+            sprite.anchor.set(0, 0.5);
+            
+            // Calculate aspect ratio and scale to cover card area
+            const imgRatio = texture.width / texture.height;
+            const cardRatio = CARD_WIDTH / CARD_HEIGHT;
+            
+            if (imgRatio > cardRatio) {
+                // Image is wider - fit height and crop width (from left side)
+                sprite.height = CARD_HEIGHT;
+                sprite.width = CARD_HEIGHT * imgRatio;
+            } else {
+                // Image is taller - fit width and crop height (centered vertically)
+                sprite.width = CARD_WIDTH;
+                sprite.height = CARD_WIDTH / imgRatio;
+            }
+            
+            // Position sprite at left edge of card
+            sprite.x = -CARD_WIDTH / 2;
+            sprite.y = 0;
+            
+            // Create container for effects
+            const container = new PIXI.Container();
+            container.addChild(sprite);
+            
+            // Add rounded corners mask
+            const mask = new PIXI.Graphics();
+            mask.beginFill(0xFFFFFF);
+            mask.drawRoundedRect(-CARD_WIDTH / 2, -CARD_HEIGHT / 2, CARD_WIDTH, CARD_HEIGHT, CARD_RADIUS);
+            mask.endFill();
+            container.addChild(mask);
+            sprite.mask = mask;
+            
+            container.userData = { imagePath, carouselIndex };
+            resolve(container);
+        };
+        
+        const onError = (err) => {
+            console.error('❌ Failed to load image:', imagePath, err);
+            reject(new Error('Failed to load: ' + imagePath));
+        };
+        
+        if (texture.baseTexture.valid) {
+            onLoaded();
+        } else {
+            texture.baseTexture.once('loaded', onLoaded);
+            texture.baseTexture.once('error', onError);
+        }
     });
 }
 
+// Get scale, alpha, and rotation based on position for 3D effect
+function getPositionProperties(index, total) {
+    const positions = [
+        { scale: 1.0, alpha: 0.85, rotation: 0.05 },   // far-left
+        { scale: 1.05, alpha: 0.9, rotation: 0.02 },   // left
+        { scale: 1.2, alpha: 1.0, rotation: 0 },        // center
+        { scale: 1.05, alpha: 0.9, rotation: -0.02 },  // right
+        { scale: 1.0, alpha: 0.85, rotation: -0.05 }   // far-right
+    ];
+    
+    return positions[index] || { scale: 1.0, alpha: 1.0, rotation: 0 };
+}
+
+// Position sprites in carousel
+function positionSprites(carouselIndex) {
+    const carousel = carousels[carouselIndex];
+    const totalWidth = carousel.sprites.length * (CARD_WIDTH + CARD_GAP) - CARD_GAP;
+    const startX = (1080 - totalWidth) / 2;
+    
+    carousel.sprites.forEach((sprite, index) => {
+        const targetX = startX + index * (CARD_WIDTH + CARD_GAP) + CARD_WIDTH / 2;
+        const props = getPositionProperties(index, carousel.sprites.length);
+        
+        sprite.x = targetX;
+        sprite.scale.set(props.scale);
+        sprite.alpha = props.alpha;
+    });
+}
+
+// Render carousel with PixiJS
+async function renderCarousel(carouselIndex) {
+    const carousel = carousels[carouselIndex];
+    console.log(`🎠 Rendering carousel ${carouselIndex} with ${carousel.images.length} images`);
+    
+    // Clear existing sprites
+    carousel.sprites.forEach(sprite => sprite.destroy({ children: true }));
+    carousel.sprites = [];
+    carousel.container.removeChildren();
+    
+    // Create sprites for each image
+    for (const image of carousel.images) {
+        try {
+            const sprite = await createPhotoSprite(image.path, carouselIndex);
+            carousel.container.addChild(sprite);
+            carousel.sprites.push(sprite);
+        } catch (error) {
+            console.error('❌ Failed to load image:', image.path, error);
+        }
+    }
+    
+    positionSprites(carouselIndex);
+    console.log(`✅ Carousel ${carouselIndex} rendered with ${carousel.sprites.length} sprites`);
+}
+
 // Render all carousels
-function renderGallery() {
+async function renderGallery() {
+    console.log('🖼️ Rendering all carousels...');
     for (let i = 0; i < 3; i++) {
-        renderCarousel(i);
+        await renderCarousel(i);
+    }
+    console.log('✅ All carousels rendered');
+}
+
+// Animate sprite to new position with 3D effect
+function animateSpriteToPosition(sprite, index, carouselIndex, duration = 2) {
+    const carousel = carousels[carouselIndex];
+    const props = getPositionProperties(index, carousel.sprites.length);
+    const totalWidth = carousel.sprites.length * (CARD_WIDTH + CARD_GAP) - CARD_GAP;
+    const startX = (1080 - totalWidth) / 2;
+    const targetX = startX + index * (CARD_WIDTH + CARD_GAP) + CARD_WIDTH / 2;
+    
+    gsap.to(sprite, {
+        x: targetX,
+        alpha: props.alpha,
+        rotation: props.rotation,
+        duration: duration,
+        ease: 'power2.inOut'
+    });
+    
+    gsap.to(sprite.scale, {
+        x: props.scale,
+        y: props.scale,
+        duration: duration,
+        ease: 'power2.inOut'
+    });
+}
+
+// Animate all sprites in carousel
+function animateCarousel(carouselIndex) {
+    const carousel = carousels[carouselIndex];
+    if (carousel.sprites.length < 2) return;
+    
+    carousel.sprites.forEach((sprite, index) => {
+        animateSpriteToPosition(sprite, index, carouselIndex, 2);
+    });
+}
+
+// Rotate carousel (shift images with animation)
+function rotateCarousel(carouselIndex) {
+    const carousel = carousels[carouselIndex];
+    if (carousel.images.length < 2 || carousel.sprites.length < 2) return;
+    
+    console.log(`🔄 Rotating carousel ${carouselIndex}`);
+    
+    if (carousel.direction === -1) {
+        // Moving left: animate sprites left, then shift
+        const firstSprite = carousel.sprites[0];
+        
+        // Fade out the leftmost sprite
+        gsap.to(firstSprite, {
+            alpha: 0,
+            x: firstSprite.x - 100,
+            duration: 1,
+            ease: 'power2.in',
+            onComplete: () => {
+                // Shift arrays
+                carousel.images.push(carousel.images.shift());
+                carousel.sprites.push(carousel.sprites.shift());
+                
+                // Reset the sprite that wrapped around
+                const wrappedSprite = carousel.sprites[carousel.sprites.length - 1];
+                const props = getPositionProperties(carousel.sprites.length - 1, carousel.sprites.length);
+                const totalWidth = carousel.sprites.length * (CARD_WIDTH + CARD_GAP) - CARD_GAP;
+                const startX = (1080 - totalWidth) / 2;
+                const targetX = startX + (carousel.sprites.length - 1) * (CARD_WIDTH + CARD_GAP) + CARD_WIDTH / 2;
+                
+                wrappedSprite.x = targetX + 200;
+                wrappedSprite.alpha = 0;
+                wrappedSprite.scale.set(0.8);
+                
+                // Animate in from right
+                gsap.to(wrappedSprite, {
+                    x: targetX,
+                    alpha: props.alpha,
+                    duration: 1,
+                    ease: 'power2.out'
+                });
+                
+                gsap.to(wrappedSprite.scale, {
+                    x: props.scale,
+                    y: props.scale,
+                    duration: 1,
+                    ease: 'power2.out'
+                });
+                
+                // Animate all other sprites to new positions
+                for (let i = 0; i < carousel.sprites.length - 1; i++) {
+                    animateSpriteToPosition(carousel.sprites[i], i, carouselIndex, 1);
+                }
+            }
+        });
+        
+    } else {
+        // Moving right: animate sprites right, then shift
+        const lastSprite = carousel.sprites[carousel.sprites.length - 1];
+        
+        // Fade out the rightmost sprite
+        gsap.to(lastSprite, {
+            alpha: 0,
+            x: lastSprite.x + 100,
+            duration: 1,
+            ease: 'power2.in',
+            onComplete: () => {
+                // Shift arrays
+                carousel.images.unshift(carousel.images.pop());
+                carousel.sprites.unshift(carousel.sprites.pop());
+                
+                // Reset the sprite that wrapped around
+                const wrappedSprite = carousel.sprites[0];
+                const props = getPositionProperties(0, carousel.sprites.length);
+                const totalWidth = carousel.sprites.length * (CARD_WIDTH + CARD_GAP) - CARD_GAP;
+                const startX = (1080 - totalWidth) / 2;
+                const targetX = startX + CARD_WIDTH / 2;
+                
+                wrappedSprite.x = targetX - 200;
+                wrappedSprite.alpha = 0;
+                wrappedSprite.scale.set(0.8);
+                
+                // Animate in from left
+                gsap.to(wrappedSprite, {
+                    x: targetX,
+                    alpha: props.alpha,
+                    duration: 1,
+                    ease: 'power2.out'
+                });
+                
+                gsap.to(wrappedSprite.scale, {
+                    x: props.scale,
+                    y: props.scale,
+                    duration: 1,
+                    ease: 'power2.out'
+                });
+                
+                // Animate all other sprites to new positions
+                for (let i = 1; i < carousel.sprites.length; i++) {
+                    animateSpriteToPosition(carousel.sprites[i], i, carouselIndex, 1);
+                }
+            }
+        });
     }
 }
 
-// Auto-rotate carousel - continuously moves photos
+// Start auto-rotation with interval
 function startAutoRotation(carouselIndex) {
     const carousel = carousels[carouselIndex];
     if (carousel.images.length < 2) return;
     
-    const track = document.getElementById(`track-${carouselIndex}`);
-    const isMiddleCarousel = carouselIndex === 1;
+    console.log(`▶️ Starting auto-rotation for carousel ${carouselIndex}`);
     
-    // Start continuous animation
-    if (isMiddleCarousel) {
-        track.classList.add('animate-right');
-    } else {
-        track.classList.add('animate-left');
-    }
+    // Initial animation to set positions
+    animateCarousel(carouselIndex);
     
-    // Rotate images every 4 seconds to match animation cycle
-    autoRotateIntervals[carouselIndex] = setInterval(() => {
-        if (isMiddleCarousel) {
-            // Moving right: shift last to first
-            const lastImage = carousel.images.pop();
-            carousel.images.unshift(lastImage);
-        } else {
-            // Moving left: shift first to last
-            const firstImage = carousel.images.shift();
-            carousel.images.push(firstImage);
-        }
-        
-        // Re-render with new positions
-        renderCarousel(carouselIndex);
-        
-        // Re-apply animation class after render
-        setTimeout(() => {
-            if (isMiddleCarousel) {
-                track.classList.add('animate-right');
-            } else {
-                track.classList.add('animate-left');
-            }
-        }, 10);
-    }, 4000);
+    // Rotate every 3 seconds (1s fade out + 1s fade in + 1s pause)
+    setInterval(() => {
+        rotateCarousel(carouselIndex);
+    }, 3000);
 }
 
-// Start auto-rotation for all carousels
+// Start all carousels
 function startAllAutoRotation() {
     for (let i = 0; i < 3; i++) {
         startAutoRotation(i);
     }
 }
 
-// Add new image to gallery
-function addNewImage(imageData) {
+// Add new image to gallery with reveal animation
+async function addNewImage(imageData) {
     console.log('New image received:', imageData);
     
     // Create new image object
@@ -580,7 +520,6 @@ function addNewImage(imageData) {
         
         for (let i = 0; i < 3; i++) {
             if (carousels[i].images.length > 0) {
-                // First image in each carousel is the oldest in that carousel
                 const firstImageTimestamp = carousels[i].images[0].timestamp || 0;
                 if (firstImageTimestamp < oldestTimestamp) {
                     oldestTimestamp = firstImageTimestamp;
@@ -589,11 +528,22 @@ function addNewImage(imageData) {
             }
         }
         
-        // Remove the oldest image
+        // Remove the oldest image with fade-out animation
         if (oldestCarouselIndex !== -1) {
             const removed = carousels[oldestCarouselIndex].images.shift();
+            const removedSprite = carousels[oldestCarouselIndex].sprites.shift();
+            
+            if (removedSprite) {
+                gsap.to(removedSprite, {
+                    pixi: { alpha: 0, scale: 0.5 },
+                    duration: 0.5,
+                    onComplete: () => {
+                        removedSprite.destroy({ children: true });
+                    }
+                });
+            }
+            
             console.log(`Removed oldest image from carousel ${oldestCarouselIndex}:`, removed.filename);
-            renderCarousel(oldestCarouselIndex);
         }
     }
     
@@ -613,33 +563,54 @@ function addNewImage(imageData) {
     }
     
     const carousel = carousels[carouselIndex];
-    const track = document.getElementById(`track-${carouselIndex}`);
-    
-    // Add new image with smooth animation
     carousel.images.push(newImage);
     
-    // Render with animation
-    renderCarousel(carouselIndex);
-    
-    // Add slide-in animation to the last card
-    setTimeout(() => {
-        const cards = track.querySelectorAll('.card-wrapper');
-        if (cards.length > 0) {
-            const lastCard = cards[cards.length - 1];
-            lastCard.classList.add('slide-in');
-            lastCard.style.animation = 'slideFromRight 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards';
-        }
-    }, 50);
-    
-    // Restart auto-rotation for this carousel
-    startAutoRotation(carouselIndex);
+    // Create sprite with reveal animation
+    try {
+        const sprite = await createPhotoSprite(newImage.path, carouselIndex);
+        carousel.container.addChild(sprite);
+        carousel.sprites.push(sprite);
+        
+        // Position all sprites
+        positionSprites(carouselIndex);
+        
+        // Animate the new sprite in
+        const lastSprite = carousel.sprites[carousel.sprites.length - 1];
+        const props = getPositionProperties(carousel.sprites.length - 1, carousel.sprites.length);
+        
+        const targetX = lastSprite.x;
+        lastSprite.alpha = 0;
+        lastSprite.scale.set(0.5);
+        lastSprite.x = targetX + 300;
+        
+        gsap.to(lastSprite, {
+            x: targetX,
+            alpha: props.alpha,
+            duration: 1.2,
+            ease: 'back.out(1.5)',
+            onComplete: () => {
+                console.log(`✨ New image added to carousel ${carouselIndex}`);
+            }
+        });
+        
+        gsap.to(lastSprite.scale, {
+            x: props.scale,
+            y: props.scale,
+            duration: 1.2,
+            ease: 'back.out(1.5)'
+        });
+        
+    } catch (error) {
+        console.error('Failed to add new image:', error);
+    }
 }
 
 // Initialize gallery
-function initializeGallery() {
+async function initializeGallery() {
     console.log('Initializing gallery with images:', initialImages);
+    initPixiApp();
     distributeImages(initialImages);
-    renderGallery();
+    await renderGallery();
 }
 
 // Pusher setup for real-time updates
@@ -680,12 +651,12 @@ setInterval(() => {
 <?php endif; ?>
 
 // Initialize on page load
-window.addEventListener('DOMContentLoaded', () => {
-    initializeGallery();
+window.addEventListener('DOMContentLoaded', async () => {
+    await initializeGallery();
     // Start auto-rotation after a short delay
     setTimeout(() => {
         startAllAutoRotation();
-        console.log('✨ Auto-rotation started for all carousels');
+        console.log('✨ Auto-rotation started for all carousels with PixiJS');
     }, 2000);
 });
 </script>
