@@ -1,0 +1,93 @@
+/* Livefeed Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #000;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-image: url('Background.webp');
+    background-size: cover;
+    background-position: center;
+    width: 1080px;
+    height: 1920px;
+    position: relative;
+    max-width: 100vw;
+    max-height: 100vh;
+    transform-origin: center;
+}
+
+.header {
+    position: absolute;
+    top: 40px;
+    left: 0;
+    width: 100%;
+    height: 180px;
+    background-image: url('Header.webp');
+    background-size: contain;
+    background-position: center top;
+    background-repeat: no-repeat;
+    z-index: 100;
+}
+
+.animated-decorations {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.decoration {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+}
+
+.lantern {
+    width: 100px;
+    height: 140px;
+}
+
+.firework {
+    width: 200px;
+    height: 200px;
+}
+
+/* Decorations positioning */
+.decoration.lantern { 
+    top: 50px; 
+    right: 100px; 
+}
+
+.decoration.flower { 
+    top: 130px; 
+    left: 80px; 
+}
+
+.decoration.firework { 
+    top: 450px; 
+    right: 120px; 
+}
+
+#pixiCanvas {
+    position: absolute;
+    top: 240px;
+    left: 0;
+    z-index: 10;
+}
+
+#pixiCanvas canvas {
+    display: block;
+}
