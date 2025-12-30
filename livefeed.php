@@ -28,8 +28,8 @@ usort($images, function($a, $b) {
     return $b['timestamp'] - $a['timestamp'];
 });
 
-// Get the 15 latest images
-$latestImages = array_slice($images, 0, 15);
+// Get the 18 latest images (max for FIFO queue)
+$latestImages = array_slice($images, 0, 18);
 ?>
 
 <!DOCTYPE html>

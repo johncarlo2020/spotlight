@@ -24,17 +24,12 @@ const CARD_RADIUS = 15;
 function distributeImages(images) {
     if (!images || images.length === 0) return;
     
-    // Add all images to global queue
-    imageQueue = [...images];
+    // Limit to maximum 18 images (no duplication)
+    imageQueue = [...images].slice(0, maxImages);
     
-    // If we have less than 18 images, duplicate them to fill
-    while (imageQueue.length < 18) {
-        imageQueue = [...imageQueue, ...images].slice(0, 18);
-    }
+    console.log(`📦 Global queue initialized with ${imageQueue.length} images (max: ${maxImages})`);
     
-    console.log(`📦 Global queue initialized with ${imageQueue.length} images`);
-    
-    // Assign first 18 images to carousels (6 each)
+    // Assign images to carousels (6 each if available)
     for (let i = 0; i < 3; i++) {
         const startIdx = i * 6;
         carousels[i].images = imageQueue.slice(startIdx, startIdx + 6);
@@ -416,9 +411,15 @@ async function addNewImage(imageData) {
         path: imageData.path || imageData.url
     };
     
-    // Add to global queue
+    // FIFO: If queue is at max capacity, remove oldest image
+    if (imageQueue.length >= maxImages) {
+        const removed = imageQueue.shift();
+        console.log(`🗑️ Queue full - removed oldest image: ${removed.filename}`);
+    }
+    
+    // Add new image to end of queue
     imageQueue.push(newImage);
-    console.log(`📦 New image added to queue (queue size: ${imageQueue.length})`);
+    console.log(`📦 New image added to queue (queue size: ${imageQueue.length}/${maxImages})`);
 }
 
 // Initialize gallery
