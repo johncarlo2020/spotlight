@@ -147,6 +147,9 @@ const maxImages = 18;
 const maxPerCarousel = 6;
 
 // Carousel state - 3 carousels with 6 images each
+// Global image queue - all images flow through this queue
+let imageQueue = [];
+
 const carousels = [
     { images: [], sprites: [], container: null, direction: -1 }, // Move left
     { images: [], sprites: [], container: null, direction: 1 },  // Move right
@@ -160,22 +163,24 @@ const CARD_HEIGHT = 360;
 const CARD_GAP = -40; // Negative gap for overlap
 const CARD_RADIUS = 15;
 
-// Distribute images across carousels evenly (each carousel needs 6 images minimum)
+// Initialize global image queue and distribute to carousels
 function distributeImages(images) {
     if (!images || images.length === 0) return;
     
-    // Need at least 18 images (6 per carousel) for proper operation
-    let imagesToUse = [...images];
+    // Add all images to global queue
+    imageQueue = [...images];
     
     // If we have less than 18 images, duplicate them to fill
-    while (imagesToUse.length < 18) {
-        imagesToUse = [...imagesToUse, ...images].slice(0, 18);
+    while (imageQueue.length < 18) {
+        imageQueue = [...imageQueue, ...images].slice(0, 18);
     }
     
-    // Distribute round-robin to ensure even distribution
-    for (let i = 0; i < imagesToUse.length && i < maxImages; i++) {
-        const carouselIndex = i % 3;
-        carousels[carouselIndex].images.push(imagesToUse[i]);
+    console.log(`📦 Global queue initialized with ${imageQueue.length} images`);
+    
+    // Assign first 18 images to carousels (6 each)
+    for (let i = 0; i < 3; i++) {
+        const startIdx = i * 6;
+        carousels[i].images = imageQueue.slice(startIdx, startIdx + 6);
     }
     
     console.log(`📊 Distribution: Carousel 0: ${carousels[0].images.length}, Carousel 1: ${carousels[1].images.length}, Carousel 2: ${carousels[2].images.length}`);
@@ -284,7 +289,8 @@ async function createPhotoSprite(imagePath, carouselIndex) {
 
 // Get scale and alpha based on position for symmetric effect (5 visible + 1 buffer off-screen)
 function getPositionProperties(index, total, direction = -1) {
-    if (index === 5) {
+    // Handle buffer position for 6-sprite system
+    if (total === 6 && index === 5) {
         // Buffer position (off-screen, ready to animate in)
         if (direction === -1) {
             // Moving left, buffer waits on the right
@@ -316,7 +322,7 @@ function positionSprites(carouselIndex) {
     carousel.sprites.forEach((sprite, index) => {
         const props = getPositionProperties(index, carousel.sprites.length, direction);
         
-        if (index === 5) {
+        if (carousel.sprites.length === 6 && index === 5) {
             // Buffer: position off-screen based on direction with lowest z-index
             if (direction === -1) {
                 // Moving left, buffer on the right
@@ -451,7 +457,7 @@ function animateCarousel(carouselIndex) {
     });
 }
 
-// Rotate carousel (shift images with simultaneous fade out/in animation)
+// Rotate carousel - shift images and pull new image from queue
 function rotateCarousel(carouselIndex) {
     const carousel = carousels[carouselIndex];
     // Need exactly 6 images for buffer system to work
@@ -473,12 +479,41 @@ function rotateCarousel(carouselIndex) {
     }
     
     // Animate all sprites to their new positions
-    // Index 0-4: visible cards slide into place
-    // Index 5: moves to buffer position off-screen
-    // What was at index 5 is now at index 0 or 4 and animates in
     carousel.sprites.forEach((sprite, index) => {
-        animateSpriteToPosition(sprite, index, carouselIndex, 1.5);
+        if (sprite && !sprite.destroyed) {
+            animateSpriteToPosition(sprite, index, carouselIndex, 1.5);
+        }
     });
+    
+    // After animation completes, swap the buffer sprite with next image from queue
+    setTimeout(() => {
+        const exitingImage = carousel.images[5];
+        const exitingSprite = carousel.sprites[5];
+        
+        // Add exiting image back to end of global queue
+        imageQueue.push(exitingImage);
+        
+        // Get next image from queue start
+        const nextImage = imageQueue.shift();
+        
+        // Kill animations and destroy exiting sprite
+        gsap.killTweensOf(exitingSprite);
+        gsap.killTweensOf(exitingSprite.scale);
+        exitingSprite.parent?.removeChild(exitingSprite);
+        exitingSprite.destroy({ children: true });
+        
+        // Replace with new image
+        carousel.images[5] = nextImage;
+        
+        // Create new sprite for the image
+        createPhotoSprite(nextImage.path, carouselIndex).then(newSprite => {
+            carousel.sprites[5] = newSprite;
+            carousel.container.addChild(newSprite);
+            positionSprites(carouselIndex);
+            console.log(`✅ Carousel ${carouselIndex} refreshed with new image from queue`);
+        });
+        
+    }, 1500); // Wait for animation to complete
 }
 
 // Start auto-rotation with interval
@@ -495,10 +530,15 @@ function startAutoRotation(carouselIndex) {
     // Initial animation to set positions
     animateCarousel(carouselIndex);
     
-    // Rotate every 3 seconds
-    setInterval(() => {
-        rotateCarousel(carouselIndex);
-    }, 3000);
+    // Rotate every 3 seconds (stagger start time to avoid simultaneous rotations)
+    const staggerDelay = carouselIndex * 1000; // 0ms, 1000ms, 2000ms
+    setTimeout(() => {
+        setInterval(() => {
+            if (carousel.images.length === 6) {
+                rotateCarousel(carouselIndex);
+            }
+        }, 3000);
+    }, staggerDelay);
 }
 
 // Start all carousels
@@ -508,7 +548,7 @@ function startAllAutoRotation() {
     }
 }
 
-// Add new image to gallery with reveal animation
+// Add new image to global queue
 async function addNewImage(imageData) {
     console.log('New image received:', imageData);
     
@@ -519,102 +559,9 @@ async function addNewImage(imageData) {
         path: imageData.path || imageData.url
     };
     
-    // Always remove the oldest image first if we're at capacity
-    let totalImages = 0;
-    for (let i = 0; i < 3; i++) {
-        totalImages += carousels[i].images.length;
-    }
-    
-    if (totalImages >= maxImages) {
-        // Find the oldest image across all carousels
-        let oldestCarouselIndex = -1;
-        let oldestTimestamp = Infinity;
-        
-        for (let i = 0; i < 3; i++) {
-            if (carousels[i].images.length > 0) {
-                const firstImageTimestamp = carousels[i].images[0].timestamp || 0;
-                if (firstImageTimestamp < oldestTimestamp) {
-                    oldestTimestamp = firstImageTimestamp;
-                    oldestCarouselIndex = i;
-                }
-            }
-        }
-        
-        // Remove the oldest image with fade-out animation
-        if (oldestCarouselIndex !== -1) {
-            const removed = carousels[oldestCarouselIndex].images.shift();
-            const removedSprite = carousels[oldestCarouselIndex].sprites.shift();
-            
-            if (removedSprite) {
-                gsap.to(removedSprite, {
-                    pixi: { alpha: 0, scale: 0.5 },
-                    duration: 0.5,
-                    onComplete: () => {
-                        removedSprite.destroy({ children: true });
-                    }
-                });
-            }
-            
-            console.log(`Removed oldest image from carousel ${oldestCarouselIndex}:`, removed.filename);
-        }
-    }
-    
-    // Find first carousel with less than 5 images
-    let carouselIndex = -1;
-    for (let i = 0; i < 3; i++) {
-        if (carousels[i].images.length < maxPerCarousel) {
-            carouselIndex = i;
-            break;
-        }
-    }
-    
-    // If all carousels full, use round-robin
-    if (carouselIndex === -1) {
-        carouselIndex = nextCarouselIndex;
-        nextCarouselIndex = (nextCarouselIndex + 1) % 3;
-    }
-    
-    const carousel = carousels[carouselIndex];
-    carousel.images.push(newImage);
-    
-    // Create sprite with reveal animation
-    try {
-        const sprite = await createPhotoSprite(newImage.path, carouselIndex);
-        carousel.container.addChild(sprite);
-        carousel.sprites.push(sprite);
-        
-        // Position all sprites
-        positionSprites(carouselIndex);
-        
-        // Animate the new sprite in
-        const lastSprite = carousel.sprites[carousel.sprites.length - 1];
-        const props = getPositionProperties(carousel.sprites.length - 1, carousel.sprites.length);
-        
-        const targetX = lastSprite.x;
-        lastSprite.alpha = 0;
-        lastSprite.scale.set(0.5);
-        lastSprite.x = targetX + 300;
-        
-        gsap.to(lastSprite, {
-            x: targetX,
-            alpha: props.alpha,
-            duration: 1.2,
-            ease: 'back.out(1.5)',
-            onComplete: () => {
-                console.log(`✨ New image added to carousel ${carouselIndex}`);
-            }
-        });
-        
-        gsap.to(lastSprite.scale, {
-            x: props.scale,
-            y: props.scale,
-            duration: 1.2,
-            ease: 'back.out(1.5)'
-        });
-        
-    } catch (error) {
-        console.error('Failed to add new image:', error);
-    }
+    // Add to global queue
+    imageQueue.push(newImage);
+    console.log(`📦 New image added to queue (queue size: ${imageQueue.length})`);
 }
 
 // Initialize gallery
