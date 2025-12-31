@@ -20,6 +20,10 @@ const CARD_HEIGHT = 360;
 const CARD_GAP = -40; // Negative gap for overlap
 const CARD_RADIUS = 15;
 
+// Track auto-rotation intervals for pause/resume
+let rotationIntervals = [null, null, null];
+let isPaused = false;
+
 // Initialize global image queue and distribute to carousels
 function distributeImages(images) {
     if (!images || images.length === 0) return;
@@ -385,12 +389,40 @@ function startAutoRotation(carouselIndex) {
     // Rotate every 3 seconds (stagger start time to avoid simultaneous rotations)
     const staggerDelay = carouselIndex * 1000; // 0ms, 1000ms, 2000ms
     setTimeout(() => {
-        setInterval(() => {
-            if (carousel.images.length === 6) {
+        rotationIntervals[carouselIndex] = setInterval(() => {
+            if (carousel.images.length === 6 && !isPaused) {
                 rotateCarousel(carouselIndex);
             }
         }, 3000);
     }, staggerDelay);
+}
+
+// Pause all auto-rotations
+function pauseAllRotations() {
+    console.log('⏸️ Pausing all carousels');
+    isPaused = true;
+    rotationIntervals.forEach((interval, index) => {
+        if (interval) {
+            clearInterval(interval);
+            rotationIntervals[index] = null;
+        }
+    });
+}
+
+// Resume all auto-rotations
+function resumeAllRotations() {
+    console.log('▶️ Resuming all carousels');
+    isPaused = false;
+    for (let i = 0; i < 3; i++) {
+        const carousel = carousels[i];
+        if (carousel.images.length === 6 && !rotationIntervals[i]) {
+            rotationIntervals[i] = setInterval(() => {
+                if (carousel.images.length === 6 && !isPaused) {
+                    rotateCarousel(i);
+                }
+            }, 3000);
+        }
+    }
 }
 
 // Start all carousels
@@ -400,9 +432,128 @@ function startAllAutoRotation() {
     }
 }
 
+// Dramatic entrance animation for new image at center
+async function animateNewImageEntrance(carouselIndex, newImage) {
+    const carousel = carousels[carouselIndex];
+    console.log(`✨ Animating new image entrance at center of carousel ${carouselIndex}`);
+    
+    // Create sprite for new image
+    const newSprite = await createPhotoSprite(newImage.path, carouselIndex);
+    carousel.container.addChild(newSprite);
+    
+    // Position at center X, but start way above screen
+    const centerX = 540;
+    newSprite.x = centerX;
+    newSprite.y = -800; // Start way above the carousel
+    
+    // Start at full opacity and slightly larger for visibility
+    newSprite.alpha = 1;
+    newSprite.scale.set(1.3);
+    newSprite.zIndex = 1000; // Highest z-index for entrance
+    newSprite.rotation = -0.1; // Slight rotation for dynamic feel
+    
+    // Shift existing sprites to make room
+    // Move sprites 0-1 further left, sprites 3-4 further right
+    carousel.sprites.forEach((sprite, index) => {
+        if (index < 2) {
+            // Push left side further left
+            gsap.to(sprite, {
+                x: sprite.x - 150,
+                alpha: 0.2,
+                duration: 0.6,
+                ease: 'power2.out'
+            });
+        } else if (index > 2) {
+            // Push right side further right
+            gsap.to(sprite, {
+                x: sprite.x + 150,
+                alpha: 0.2,
+                duration: 0.6,
+                ease: 'power2.out'
+            });
+        } else {
+            // Fade out center card
+            gsap.to(sprite, {
+                alpha: 0,
+                scale: 0.7,
+                duration: 0.6,
+                ease: 'power2.out'
+            });
+        }
+    });
+    
+    // Dramatic fly-in from top with bounce
+    await new Promise(resolve => {
+        gsap.to(newSprite, {
+            y: 0,
+            rotation: 0,
+            duration: 1.5,
+            ease: 'back.out(1.7)',
+            onComplete: resolve
+        });
+        
+        gsap.to(newSprite.scale, {
+            x: 1.35,
+            y: 1.35,
+            duration: 1.5,
+            ease: 'back.out(1.2)'
+        });
+    });
+    
+    // Hold for a moment at peak size
+    await new Promise(resolve => setTimeout(resolve, 1800));
+    
+    // Replace center image with new image
+    const oldCenterSprite = carousel.sprites[2];
+    const oldCenterImage = carousel.images[2];
+    
+    // Remove old center sprite
+    if (oldCenterSprite) {
+        gsap.killTweensOf(oldCenterSprite);
+        gsap.killTweensOf(oldCenterSprite.scale);
+        oldCenterSprite.parent?.removeChild(oldCenterSprite);
+        oldCenterSprite.destroy({ children: true });
+    }
+    
+    // Insert new image and sprite at center
+    carousel.images[2] = newImage;
+    carousel.sprites[2] = newSprite;
+    
+    // Add old center image back to queue
+    if (oldCenterImage) {
+        imageQueue.push(oldCenterImage);
+    }
+    
+    // Animate everything back to normal positions
+    carousel.sprites.forEach((sprite, index) => {
+        const props = getPositionProperties(index, carousel.sprites.length, carousel.direction);
+        const centerIndex = 2;
+        const targetX = centerX + (index - centerIndex) * (CARD_WIDTH + CARD_GAP);
+        
+        sprite.zIndex = 100 + (index * 10);
+        
+        gsap.to(sprite, {
+            x: targetX,
+            alpha: props.alpha,
+            duration: 1.0,
+            ease: 'power2.inOut'
+        });
+        
+        gsap.to(sprite.scale, {
+            x: props.scale,
+            y: props.scale,
+            duration: 1.0,
+            ease: 'power2.inOut'
+        });
+    });
+    
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    console.log(`✅ Entrance animation complete for carousel ${carouselIndex}`);
+}
+
 // Add new image to global queue
 async function addNewImage(imageData) {
-    console.log('New image received:', imageData);
+    console.log('🆕 New image received:', imageData);
     
     // Create new image object
     const newImage = {
@@ -410,6 +561,16 @@ async function addNewImage(imageData) {
         timestamp: imageData.timestamp || Math.floor(Date.now() / 1000),
         path: imageData.path || imageData.url
     };
+    
+    // PAUSE ALL CAROUSELS for dramatic entrance
+    pauseAllRotations();
+    
+    // Select carousel for entrance (cycle through them)
+    const targetCarousel = nextCarouselIndex % 3;
+    nextCarouselIndex++;
+    
+    // Animate entrance at center
+    await animateNewImageEntrance(targetCarousel, newImage);
     
     // FIFO: If queue is at max capacity, remove oldest image
     if (imageQueue.length >= maxImages) {
@@ -420,6 +581,9 @@ async function addNewImage(imageData) {
     // Add new image to end of queue
     imageQueue.push(newImage);
     console.log(`📦 New image added to queue (queue size: ${imageQueue.length}/${maxImages})`);
+    
+    // RESUME ALL CAROUSELS
+    resumeAllRotations();
 }
 
 // Initialize gallery
