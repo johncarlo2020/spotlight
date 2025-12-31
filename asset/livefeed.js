@@ -115,6 +115,15 @@ async function createPhotoSprite(imagePath, carouselIndex) {
             
             // Create container for effects
             const container = new PIXI.Container();
+            
+            // Add shadow layer using Graphics
+            const shadow = new PIXI.Graphics();
+            shadow.beginFill(0x000000, 0.2);
+            shadow.drawRoundedRect(-CARD_WIDTH / 2 + 5, -CARD_HEIGHT / 2 + 5, CARD_WIDTH, CARD_HEIGHT, CARD_RADIUS);
+            shadow.endFill();
+            shadow.filters = [new PIXI.BlurFilter(8)];
+            container.addChild(shadow);
+            
             container.addChild(sprite);
             
             // Add rounded corners mask
@@ -389,14 +398,14 @@ function startAutoRotation(carouselIndex) {
     // Initial animation to set positions
     animateCarousel(carouselIndex);
     
-    // Rotate every 3 seconds (stagger start time to avoid simultaneous rotations)
+    // Rotate every 5 seconds (stagger start time to avoid simultaneous rotations)
     const staggerDelay = carouselIndex * 1000; // 0ms, 1000ms, 2000ms
     setTimeout(() => {
         rotationIntervals[carouselIndex] = setInterval(() => {
             if (carousel.images.length === 6 && !isPaused) {
                 rotateCarousel(carouselIndex);
             }
-        }, 3000);
+        }, 5000);
     }, staggerDelay);
 }
 
@@ -423,7 +432,7 @@ function resumeAllRotations() {
                 if (carousel.images.length === 6 && !isPaused) {
                     rotateCarousel(i);
                 }
-            }, 3000);
+            }, 5000);
         }
     }
 }
