@@ -49,20 +49,29 @@ body {
     z-index: 1;
 }
 
-.decoration {
-    position: absolute;
-    width: 120px;
-    height: 120px;
-}
 
 .lantern {
-    width: 100px;
-    height: 140px;
+    width: 174px;
+    height: auto;
 }
 
-.firework {
+.flower {
+    width: 150px;
+    height: auto;
+}
+
+.firework-1 {
     width: 200px;
     height: 200px;
+}
+
+.firework-2 {
+    width: 200px;
+    height: 200px;
+}
+
+.decoration {
+    position: absolute;
 }
 
 /* Decorations positioning */
@@ -76,9 +85,14 @@ body {
     left: 80px; 
 }
 
-.decoration.firework { 
-    top: 450px; 
+.decoration.firework-1 { 
+    top: 712px; 
     right: 120px; 
+}
+
+.decoration.firework-2 { 
+   top: 1269px;
+    left: 97px;
 }
 
 #pixiCanvas {
