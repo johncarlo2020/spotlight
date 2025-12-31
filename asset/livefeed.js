@@ -15,9 +15,9 @@ const carousels = [
 
 let nextCarouselIndex = 0;
 let app = null;
-const CARD_WIDTH = 240;
+const CARD_WIDTH = 270; // Adjusted to show exactly 900px (half) of 1800px image
 const CARD_HEIGHT = 360;
-const CARD_GAP = -40; // Negative gap for overlap
+const CARD_GAP = -70; // Increased overlap to compensate for wider cards
 const CARD_RADIUS = 15;
 
 // Track auto-rotation intervals for pause/resume
@@ -92,7 +92,7 @@ async function createPhotoSprite(imagePath, carouselIndex) {
             console.log('✅ Image loaded:', imagePath);
             
             const sprite = new PIXI.Sprite(texture);
-            // Use left-center anchor to match CSS object-position: left center
+            // Use left-center anchor to show left frame of template
             sprite.anchor.set(0, 0.5);
             
             // Calculate aspect ratio and scale to cover card area
@@ -100,7 +100,7 @@ async function createPhotoSprite(imagePath, carouselIndex) {
             const cardRatio = CARD_WIDTH / CARD_HEIGHT;
             
             if (imgRatio > cardRatio) {
-                // Image is wider - fit height and crop width (from left side)
+                // Image is wider - fit height and crop width (show left portion + right border)
                 sprite.height = CARD_HEIGHT;
                 sprite.width = CARD_HEIGHT * imgRatio;
             } else {
@@ -109,7 +109,7 @@ async function createPhotoSprite(imagePath, carouselIndex) {
                 sprite.height = CARD_WIDTH / imgRatio;
             }
             
-            // Position sprite at left edge of card
+            // Position sprite at left edge of card to show left frame
             sprite.x = -CARD_WIDTH / 2;
             sprite.y = 0;
             
@@ -190,13 +190,15 @@ function positionSprites(carouselIndex) {
             sprite.visible = false;
             sprite.zIndex = 0; // Lowest z-index for buffer
         } else {
-            // Visible cards (0-4) - stack like cards in a deck
+            // Visible cards (0-4) - stack with center card on top
             const offsetFromCenter = (index - centerIndex) * (CARD_WIDTH + CARD_GAP);
             sprite.x = centerX + offsetFromCenter;
             sprite.visible = true;
             
-            // Sequential z-index: card 0 at bottom, card 4 at top
-            sprite.zIndex = 100 + (index * 10);
+            // Z-index: center card (index 2) highest, decreasing outward
+            // 0=100, 1=120, 2=150, 3=120, 4=100
+            const distanceFromCenter = Math.abs(index - centerIndex);
+            sprite.zIndex = 150 - (distanceFromCenter * 20);
         }
         
         sprite.scale.set(props.scale);
@@ -280,11 +282,12 @@ function animateSpriteToPosition(sprite, index, carouselIndex, duration = 2) {
         });
         
     } else {
-        // Visible positions (0-4) - stack like cards in a deck
+        // Visible positions (0-4) - center card on top
         targetX = centerX + (index - centerIndex) * (CARD_WIDTH + CARD_GAP);
         
-        // Sequential z-index: card 0 at bottom, card 4 at top
-        sprite.zIndex = 100 + (index * 10);
+        // Z-index: center card (index 2) highest, decreasing outward
+        const distanceFromCenter = Math.abs(index - centerIndex);
+        sprite.zIndex = 150 - (distanceFromCenter * 20);
         sprite.visible = true;
         
         gsap.to(sprite, {
