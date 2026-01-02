@@ -51,29 +51,33 @@ body {
 
 
 .lantern {
-        width: 257px;
+    width: 257px;
     height: 253px;
+    object-fit: contain;
 }
 
 .flower {
     width: 150px;
     height: auto;
+    object-fit: contain;
 }
 
 .firework-1 {
-    width: 200px;
+    width: 150px;
     height: 200px;
+    object-fit: contain;
 }
 
 .firework-2 {
     width: 200px;
     height: 200px;
+    object-fit: contain;
 }
 
 .decoration {
     position: absolute;
-    width: 194px;
-    height: 148px;
+    width: 279px;
+    height: 234px;
 }
 
 /* Decorations positioning */
@@ -88,7 +92,7 @@ body {
 }
 
 .decoration.firework-1 { 
-    top: 712px; 
+    top: 644px; 
     right: 120px; 
 }
 

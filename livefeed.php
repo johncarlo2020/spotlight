@@ -53,8 +53,8 @@ $latestImages = array_slice($images, 0, 18);
 <div class="animated-decorations">
     <img src="asset/lantern.gif" class="decoration lantern" alt="">
     <img src="asset/flower.gif" class="decoration flower" alt="">
-    <img src="asset/firework.gif" class="decoration firework-1" alt="">
-    <img src="asset/firework.gif" class="decoration firework-2" alt="">
+    <img src="asset/firework.webp" class="decoration firework-1" alt="">
+    <img src="asset/lantern.webp" class="decoration firework-2" alt="">
 </div>
 
 <div id="pixiCanvas"></div>
