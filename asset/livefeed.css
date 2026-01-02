@@ -51,8 +51,8 @@ body {
 
 
 .lantern {
-    width: 174px;
-    height: auto;
+        width: 257px;
+    height: 253px;
 }
 
 .flower {
@@ -72,16 +72,18 @@ body {
 
 .decoration {
     position: absolute;
+    width: 194px;
+    height: 148px;
 }
 
 /* Decorations positioning */
 .decoration.lantern { 
-    top: 50px; 
-    right: 100px; 
+       top: 39px;
+    right: 60px; 
 }
 
 .decoration.flower { 
-    top: 130px; 
+    top: 90px; 
     left: 80px; 
 }
 
