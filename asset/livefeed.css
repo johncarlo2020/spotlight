@@ -50,34 +50,31 @@ body {
 }
 
 
-.lantern {
-    width: 257px;
-    height: 253px;
-    object-fit: contain;
-}
 
-.flower {
-    width: 150px;
-    height: auto;
-    object-fit: contain;
-}
-
-.firework-1 {
-    width: 150px;
-    height: 200px;
-    object-fit: contain;
-}
-
-.firework-2 {
-    width: 200px;
-    height: 200px;
-    object-fit: contain;
-}
 
 .decoration {
     position: absolute;
-    width: 279px;
-    height: 234px;
+    object-fit: contain;
+}
+
+.decoration.lantern {
+    width: 257px;
+    height: 253px;
+}
+
+.decoration.flower {
+    width: 220px;
+    height: auto;
+}
+
+.decoration.firework-1 {
+    width: 200px;
+    height: 200px;
+}
+
+.decoration.firework-2 {
+    width: 200px;
+    height: 200px;
 }
 
 /* Decorations positioning */
@@ -92,7 +89,7 @@ body {
 }
 
 .decoration.firework-1 { 
-    top: 644px; 
+    top: 701px; 
     right: 120px; 
 }
 

@@ -359,6 +359,7 @@
             ?>
             <img src="<?php echo $qrCodeUrl; ?>" alt="Scan QR Code" style="display: block; margin: 20px auto;">
             <p>Open your phone camera and scan this QR code<br>to start taking photos</p>
+            <a href="camera.php" style="display: inline-block; margin-top: 20px; background: #ff69b4; color: white; padding: 15px 30px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px; transition: all 0.3s ease;" onmouseover="this.style.background='#ff1493'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='#ff69b4'; this.style.transform='translateY(0)';">📱 Use this phone as Wowrover 2.0</a>
         </div>
     </div>
 </body>
